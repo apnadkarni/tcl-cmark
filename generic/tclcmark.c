@@ -15,10 +15,11 @@
 #include <string.h>
 #include "tcl.h"
 #include "cmark.h"
+#include "core-extensions.h"
 
 static int TclCMark_RenderObjCmd(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]);
-extern DLLEXPORT int Tclcmark_Init(Tcl_Interp * interp);
+extern DLLEXPORT int Cmark_Init(Tcl_Interp * interp);
 
 static void TclCMark_MemPanic()
 {
@@ -103,6 +104,8 @@ static int TclCMark_RenderObjCmd(
 	Tcl_WrongNumArgs(interp, 1, objv, "?options? COMMONMARKTEXT");
         return TCL_ERROR;
     }
+
+    core_extensions_ensure_registered();
     
     for (arg_index = 1; arg_index < objc-1; ++arg_index) {
 	int opt_index;
@@ -152,6 +155,18 @@ static int TclCMark_RenderObjCmd(
 #endif
     if (parser == NULL)
         goto document_error;
+
+    /* Load the standard extensions */
+    {
+        cmark_syntax_extension *ext = cmark_find_syntax_extension("strikethrough");
+        if (ext == NULL) {
+            Tcl_AppendResult(interp, "Error loading CommonMark extension ", "strikethrough", NULL);
+            res = TCL_ERROR;
+            goto vamoose;
+        }
+        cmark_parser_attach_syntax_extension(parser, ext);
+    }
+    
     cmark_parser_feed(parser, cmark_text, nbytes);
 
     document = cmark_parser_finish(parser);
@@ -220,7 +235,7 @@ document_error:
 }
 
 /* Note the capitalization in Tclcmark_Init is as expected by Tcl loader */
-int Tclcmark_Init(Tcl_Interp *interp)
+int Cmark_Init(Tcl_Interp *interp)
 {
 #ifdef USE_TCL_STUBS
     if (Tcl_InitStubs(interp, "8.1", 0) == NULL) {

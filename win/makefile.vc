@@ -15,8 +15,7 @@
 #------------------------------------------------------------------------------
 
 # The name of the package
-PROJECT = tclcmark
-PRJ_PACKAGE_TCLNAME = cmark
+PROJECT = cmark
 
 !include "rules-ext.vc"
 
@@ -24,7 +23,8 @@ PRJ_PACKAGE_TCLNAME = cmark
 CMARKDIR = cmark-gfm\$(ARCH)
 !endif
 
-PRJ_DEFINES = -DCMARK_STATIC_DEFINE
+# -DCMARK_STATIC_DEFINE required to link to the static lib version of cmark
+PRJ_DEFINES = -DCMARK_STATIC_DEFINE -DCMARKEXTENSIONS_STATIC_DEFINE -wd4267 
 PRJ_INCLUDES = -I"$(CMARKDIR)\include"
 PRJ_OBJS = $(TMP_DIR)\tclcmark.obj
 PRJ_LIBS = $(CMARKDIR)\lib\cmark-gfm_static.lib $(CMARKDIR)\lib\cmark-gfmextensions_static.lib 
