@@ -79,19 +79,24 @@ static int TclCMark_RenderObjCmd(
 {
     int arg_index;
     static const char *opts[] = {
-        "-html", "-text", "-xml", 
-        "-latex", "-commonmark", "-man",
-        "-utf8validate", "-smartquotes", "-safe",
-        "-width",
+        "-to", "-utf8validate", "-smartquotes", 
+        "-safe", "-width",
         NULL,
     };
     enum optflags {
+        TCL_CMARK_TO, TCL_CMARK_VALIDATE_UTF8, TCL_CMARK_SMART,
+        TCL_CMARK_SAFE, TCL_CMARK_WIDTH,
+    };
+    static const char *fmts[] = {
+        "html", "text", "xml", 
+        "latex", "commonmark", "man",
+        NULL
+    };
+    enum fmtflags {
         TCL_CMARK_HTML, TCL_CMARK_TEXT, TCL_CMARK_XML, 
         TCL_CMARK_LATEX, TCL_CMARK_CMARK, TCL_CMARK_MAN,
-        TCL_CMARK_VALIDATE_UTF8, TCL_CMARK_SMART, TCL_CMARK_SAFE,
-        TCL_CMARK_WIDTH,
     };
-    enum optflags render_fmt = TCL_CMARK_HTML;
+    enum fmtflags render_fmt = TCL_CMARK_HTML;
     int cmark_opts = CMARK_OPT_DEFAULT;
     int width = 0;;
     cmark_node *document = NULL;
@@ -109,19 +114,20 @@ static int TclCMark_RenderObjCmd(
     
     for (arg_index = 1; arg_index < objc-1; ++arg_index) {
 	int opt_index;
+        int fmt_index;
 
 	if (Tcl_GetIndexFromObj(interp, objv[arg_index], opts, "option", 0,
-		&opt_index) != TCL_OK) {
+		&opt_index) != TCL_OK)
 	    return TCL_ERROR;
-	}
+
 	switch ((enum optflags) opt_index) {
-        case TCL_CMARK_HTML: 
-        case TCL_CMARK_TEXT:
-        case TCL_CMARK_XML:
-        case TCL_CMARK_LATEX:
-        case TCL_CMARK_CMARK:
-        case TCL_CMARK_MAN:
-            render_fmt = opt_index;
+        case TCL_CMARK_TO:
+            if (++arg_index >= objc-1)
+                goto missing_arg_error;
+            if (Tcl_GetIndexFromObj(interp, objv[arg_index], fmts, "format", 0,
+                                    &fmt_index) != TCL_OK)
+                return TCL_ERROR;
+            render_fmt = fmt_index;
             break;
         case TCL_CMARK_VALIDATE_UTF8:
             cmark_opts |= CMARK_OPT_VALIDATE_UTF8;
@@ -133,9 +139,8 @@ static int TclCMark_RenderObjCmd(
             cmark_opts |= CMARK_OPT_SAFE;
             break;
         case TCL_CMARK_WIDTH:
-            if (++arg_index >= objc-1) {
-                Tcl_SetResult(interp, "No value specified for option -width", TCL_STATIC);
-            }
+            if (++arg_index >= objc-1)
+                goto missing_arg_error;
             res = Tcl_GetIntFromObj(interp, objv[arg_index], &width);
             if (res != TCL_OK)
                 return res;
@@ -232,6 +237,12 @@ document_error:
     Tcl_SetResult(interp, "Error parsing document.", TCL_STATIC);
     res = TCL_ERROR;
     goto vamoose;
+
+missing_arg_error: /* arg_index-1 should point to offending option! */
+    Tcl_AppendResult(interp, "No value specified for option ", Tcl_GetString(objv[arg_index-1]), ".", NULL);
+    res = TCL_ERROR;
+    goto vamoose;
+    
 }
 
 /* Note the capitalization in Tclcmark_Init is as expected by Tcl loader */
