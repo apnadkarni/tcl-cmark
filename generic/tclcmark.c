@@ -17,11 +17,11 @@
 #include "cmark.h"
 #include "core-extensions.h"
 
-static int TclCMark_RenderObjCmd(ClientData clientData, Tcl_Interp *interp,
+static int tclcmark_RenderObjCmd(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]);
 extern DLLEXPORT int Cmark_Init(Tcl_Interp * interp);
 
-static void TclCMark_MemPanic()
+static void tclcmark_memory_panic()
 {
     Tcl_Panic("Memory allocation request exceeds limit.");
 }
@@ -31,37 +31,58 @@ static void TclCMark_MemPanic()
  * allocator so we can directly use allocated memory as interpreter result.
  * We need wrappers because parameter types differ (int v/s size_t).
  */
-void *TclCMark_calloc(size_t nmem, size_t size)
+void *tclcmark_calloc(size_t nmem, size_t size)
 {
     size_t nbytes;
     void *p;
     if (nmem > INT_MAX || size > INT_MAX)
-        TclCMark_MemPanic();
+        tclcmark_memory_panic();
 
     nbytes = nmem * size;       /* Cannot overflow because of above checks */
     if (nbytes > INT_MAX)
-        TclCMark_MemPanic();
+        tclcmark_memory_panic();
 
     p = ckalloc((int)nbytes);   /* Panics on failure to allocate */
     memset(p, 0, nbytes);
     return p;
 }
 
-void *TclCMark_realloc(void *p, size_t size)
+void *tclcmark_realloc(void *p, size_t size)
 {
     if (size > INT_MAX)
-        TclCMark_MemPanic();
+        tclcmark_memory_panic();
     return ckrealloc(p, (int) size);
 }
 
-void TclCMark_free(void *p)
+void tclcmark_free(void *p)
 {
     ckfree(p);
 }
 
-static cmark_mem TclCMark_Allocator = {
-    TclCMark_calloc, TclCMark_realloc, TclCMark_free
+static cmark_mem tclcmark_allocator = {
+    tclcmark_calloc, tclcmark_realloc, tclcmark_free
 };
+
+/*
+ * Load a CommonMark extension of the specified name.
+ * Returns TCL_OK/TCL_ERROR with an appropriate error message stored
+ * in the interp in the latter case.
+ */
+
+static int tclcmark_load_extension(
+    Tcl_Interp *interp,
+    cmark_parser *parser,
+    const char *name)
+{
+    cmark_syntax_extension *ext = cmark_find_syntax_extension(name);
+    if (ext == NULL) {
+        Tcl_AppendResult(interp, "Error loading CommonMark extension ", 
+                             "strikethrough", NULL);
+        return TCL_ERROR;
+    }
+    cmark_parser_attach_syntax_extension(parser, ext);
+    return TCL_OK;
+}
 
 /*
  * render MARKDOWNTEXT
@@ -70,7 +91,7 @@ static cmark_mem TclCMark_Allocator = {
  * interp result.
  */
 
-static int TclCMark_RenderObjCmd(
+static int tclcmark_render_cmd(
     ClientData clientData,	/* Not used. */
     Tcl_Interp *interp,		/* Current interpreter */
     int objc,			/* Number of arguments */
@@ -81,11 +102,15 @@ static int TclCMark_RenderObjCmd(
     static const char *opts[] = {
         "-to", "-utf8validate", "-smartquotes", 
         "-safe", "-width",
+        "-gfm", "-table", "-strikethrough",
+        "-autolink", "-tagfilter",
         NULL,
     };
     enum optflags {
         TCL_CMARK_TO, TCL_CMARK_VALIDATE_UTF8, TCL_CMARK_SMART,
         TCL_CMARK_SAFE, TCL_CMARK_WIDTH,
+        TCL_CMARK_GFM, TCL_CMARK_TABLE, TCL_CMARK_STRIKETHROUGH,
+        TCL_CMARK_AUTOLINK, TCL_CMARK_TAGFILTER,
     };
     static const char *fmts[] = {
         "html", "text", "xml", 
@@ -98,7 +123,12 @@ static int TclCMark_RenderObjCmd(
     };
     enum fmtflags render_fmt = TCL_CMARK_HTML;
     int cmark_opts = CMARK_OPT_DEFAULT;
-    int width = 0;;
+    int width = 0;
+    int gfm = 0;
+    int table = 0;
+    int strikethrough = 0;
+    int autolink = 0;
+    int tagfilter = 0;
     cmark_node *document = NULL;
     cmark_parser *parser = NULL;
     int nbytes, res = TCL_ERROR;
@@ -147,6 +177,11 @@ static int TclCMark_RenderObjCmd(
             if (width < 0)
                 width = 0;
             break;
+        case TCL_CMARK_GFM:           gfm = 1; break;
+        case TCL_CMARK_TABLE:         table = 1; break;
+        case TCL_CMARK_STRIKETHROUGH: strikethrough = 1; break;
+        case TCL_CMARK_AUTOLINK:      autolink = 1; break;
+        case TCL_CMARK_TAGFILTER:     tagfilter = 1; break;
         }
     }
 
@@ -162,15 +197,27 @@ static int TclCMark_RenderObjCmd(
         goto document_error;
 
     /* Load the standard extensions */
-    {
-        cmark_syntax_extension *ext = cmark_find_syntax_extension("strikethrough");
-        if (ext == NULL) {
-            Tcl_AppendResult(interp, "Error loading CommonMark extension ", "strikethrough", NULL);
-            res = TCL_ERROR;
+    if (gfm || table) {
+        res = tclcmark_load_extension(interp, parser, "table");
+        if (res != TCL_OK)
             goto vamoose;
-        }
-        cmark_parser_attach_syntax_extension(parser, ext);
     }
+    if (gfm || strikethrough) {
+        res = tclcmark_load_extension(interp, parser, "strikethrough");
+        if (res != TCL_OK)
+            goto vamoose;
+    }
+    if (gfm || autolink) {
+        res = tclcmark_load_extension(interp, parser, "autolink");
+        if (res != TCL_OK)
+            goto vamoose;
+    }
+    if (gfm || tagfilter) {
+        res = tclcmark_load_extension(interp, parser, "tagfilter");
+        if (res != TCL_OK)
+            goto vamoose;
+    }
+
     
     cmark_parser_feed(parser, cmark_text, nbytes);
 
@@ -182,28 +229,28 @@ static int TclCMark_RenderObjCmd(
         case TCL_CMARK_HTML: 
             rendered = cmark_render_html_with_mem(document, cmark_opts, 
                                                   NULL,
-                                                  &TclCMark_Allocator);
+                                                  &tclcmark_allocator);
             break;
         case TCL_CMARK_TEXT:
             rendered = cmark_render_plaintext_with_mem(document, cmark_opts, 
-                                                       width, &TclCMark_Allocator);
+                                                       width, &tclcmark_allocator);
             break;
         case TCL_CMARK_XML:
             rendered = cmark_render_xml_with_mem(document, cmark_opts, 
-                                                 &TclCMark_Allocator);
+                                                 &tclcmark_allocator);
             break;
         case TCL_CMARK_LATEX:
             rendered = cmark_render_latex_with_mem(document, cmark_opts, 
-                                                   width, &TclCMark_Allocator);
+                                                   width, &tclcmark_allocator);
             break;
         case TCL_CMARK_CMARK:
             rendered = cmark_render_commonmark_with_mem(document, cmark_opts, 
                                                         width,
-                                                        &TclCMark_Allocator);
+                                                        &tclcmark_allocator);
             break;
         case TCL_CMARK_MAN:
             rendered = cmark_render_man_with_mem(document, cmark_opts, 
-                                                 width, &TclCMark_Allocator);
+                                                 width, &tclcmark_allocator);
             break;
     }
 
@@ -256,7 +303,7 @@ int Cmark_Init(Tcl_Interp *interp)
     if (Tcl_PkgProvide(interp, PACKAGE_NAME, PACKAGE_VERSION) != TCL_OK) {
 	return TCL_ERROR;
     }
-    Tcl_CreateObjCommand(interp, "cmark::render", TclCMark_RenderObjCmd,
+    Tcl_CreateObjCommand(interp, "cmark::render", tclcmark_render_cmd,
 	    (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
 
     return TCL_OK;
