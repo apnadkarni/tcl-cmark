@@ -12,6 +12,12 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
+# NOTE: to build the cmark libraries if needed
+#   Run the nmake.bat batch file in the top level cmark directory.
+#   nmake
+#   nmake install
+# The build\windows directory will contain the include and libs. Note
+# then do a nmake clean and rebuild for the other architecture.
 #------------------------------------------------------------------------------
 
 # The name of the package
@@ -20,7 +26,7 @@ PROJECT = cmark
 !include "rules-ext.vc"
 
 !ifndef CMARKDIR
-CMARKDIR = cmark-gfm\$(ARCH)
+CMARKDIR = cmark-gfm\$(ARCH:IX86=x86)
 !endif
 
 # -DCMARK_STATIC_DEFINE required to link to the static lib version of cmark
