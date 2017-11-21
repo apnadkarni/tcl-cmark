@@ -65,6 +65,12 @@ TEA_PREFIX
 TEA_SETUP_COMPILER
 
 #-----------------------------------------------------------------------
+# Figure out flags for cmark-gfm library
+#-----------------------------------------------------------------------
+
+TCLCMARK_LOCATE_CMARK
+
+#-----------------------------------------------------------------------
 # __CHANGE__
 # Specify the C source files to compile in TEA_ADD_SOURCES,
 # public headers that need to be installed in TEA_ADD_HEADERS,
