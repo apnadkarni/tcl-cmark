@@ -13,12 +13,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 #include "tcl.h"
 #include "cmark.h"
 #include "core-extensions.h"
 
-static int tclcmark_RenderObjCmd(ClientData clientData, Tcl_Interp *interp,
-                                 int objc, Tcl_Obj *const objv[]);
 extern DLLEXPORT int Cmark_Init(Tcl_Interp * interp);
 
 static void tclcmark_memory_panic()
