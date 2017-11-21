@@ -320,7 +320,7 @@ int Cmark_Init(Tcl_Interp *interp)
 	return TCL_ERROR;
     }
 #endif
-    if (Tcl_PkgProvide(interp, PACKAGE_NAME, PACKAGE_VERSION) != TCL_OK) {
+    if (Tcl_PkgProvide(interp, PACKAGE_TCLNAME, PACKAGE_VERSION) != TCL_OK) {
 	return TCL_ERROR;
     }
     Tcl_CreateObjCommand(interp, "cmark::render", tclcmark_render_cmd,
