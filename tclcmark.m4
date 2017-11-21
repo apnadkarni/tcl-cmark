@@ -5,11 +5,11 @@ AC_DEFUN(TCLCMARK_LOCATE_CMARK, [
     if test "$HAVECMARK" = "1" ; then
         AC_MSG_RESULT([found])
         if test "${TEA_PLATFORM}" = "windows" ; then
-            CMARK_CFLAGS ="`pkg-config --cflags libcmark-gfm`"
-            CMARK_LIBS="-Wl,-Bstatic `pkg-config --static --libs libcmark-gfm` -Wl,-Bdynamic"
+            CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm`"
+            CMARK_LIBS="-Wl,-Bstatic `pkg-config --static --libs libcmark-gfm` -lcmark-gfmextensions -Wl,-Bdynamic"
         else
-            CMARK_CFLAGS ="`pkg-config --cflags libcmark-gfm`"
-            CMARK_LIBS="`pkg-config --libs libcmark-gfm`"
+            CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm`"
+            CMARK_LIBS="`pkg-config --libs libcmark-gfm` -lcmark-gfmextensions"
         fi
     else
         AC_MSG_ERROR([The required lib libcmark-gfm not found])
