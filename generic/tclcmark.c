@@ -99,7 +99,7 @@ static int tclcmark_render_cmd(
 {
     int arg_index;
     static const char *opts[] = {
-        "-to", "-utf8validate", "-smartquotes", 
+        "-to", "-utf8validate", "-smart", 
         "-safe", "-width", "-footnotes",
         "-gfm", "-table", "-strikethrough",
         "-autolink", "-tagfilter",
