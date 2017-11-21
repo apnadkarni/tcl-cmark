@@ -1,2 +1,4 @@
 # tcl-cmark
-Tcl bindings to the cmark Markdown library
+
+This project implementes Tcl bindings to the cmark-gfm 
+CommonMark/Markdown library.

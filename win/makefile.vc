@@ -21,7 +21,8 @@
 #------------------------------------------------------------------------------
 
 # The name of the package
-PROJECT = cmark
+PROJECT = tclcmark
+PRJ_PACKAGE_TCLNAME = cmark
 
 !include "rules-ext.vc"
 

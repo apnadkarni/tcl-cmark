@@ -17,7 +17,7 @@
 # have been added in a customized configure script.
 #========================================================================
 
-#SAMPLE_NEW_VAR	= @SAMPLE_NEW_VAR@
+PACKAGE_TCLNAME = @PACKAGE_TCLNAME@
 
 #========================================================================
 # Nothing of the variables below this line should need to be changed.
@@ -161,7 +161,7 @@ DEFS		= @DEFS@ $(PKG_CFLAGS)
 CONFIG_CLEAN_FILES = Makefile pkgIndex.tcl
 CLEANFILES	= @CLEANFILES@
 
-CPPFLAGS	= @CPPFLAGS@
+CPPFLAGS	= @CPPFLAGS@ -DPACKAGE_TCLNAME=\"$(PACKAGE_TCLNAME)\"
 LIBS		= @PKG_LIBS@ @LIBS@
 AR		= @AR@
 CFLAGS		= @CFLAGS@
