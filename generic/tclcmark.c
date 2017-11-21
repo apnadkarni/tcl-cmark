@@ -60,7 +60,7 @@ void tclcmark_free(void *p)
 }
 
 static cmark_mem tclcmark_allocator = {
-    tclcmark_calloc, tclcmark_realloc, tclcmark_free
+    tclcmark_calloc, tclcmark_realloc, tclcmark_free,
 };
 
 /*
@@ -68,7 +68,6 @@ static cmark_mem tclcmark_allocator = {
  * Returns TCL_OK/TCL_ERROR with an appropriate error message stored
  * in the interp in the latter case.
  */
-
 static int tclcmark_load_extension(
     Tcl_Interp *interp,
     cmark_parser *parser,
@@ -101,16 +100,20 @@ static int tclcmark_render_cmd(
     int arg_index;
     static const char *opts[] = {
         "-to", "-utf8validate", "-smartquotes", 
-        "-safe", "-width",
+        "-safe", "-width", "-footnotes",
         "-gfm", "-table", "-strikethrough",
         "-autolink", "-tagfilter",
+        "-sourcepos", "-hardbreaks", "-nobreaks",
+        "-liberaltag", "-ghprelang",
         NULL,
     };
     enum optflags {
         TCL_CMARK_TO, TCL_CMARK_VALIDATE_UTF8, TCL_CMARK_SMART,
-        TCL_CMARK_SAFE, TCL_CMARK_WIDTH,
+        TCL_CMARK_SAFE, TCL_CMARK_WIDTH, TCL_CMARK_FOOTNOTES,
         TCL_CMARK_GFM, TCL_CMARK_TABLE, TCL_CMARK_STRIKETHROUGH,
         TCL_CMARK_AUTOLINK, TCL_CMARK_TAGFILTER,
+        TCL_CMARK_SOURCEPOS, TCL_CMARK_HARDBREAKS, TCL_CMARK_NOBREAKS,
+        TCL_CMARK_LIBERALTAG, TCL_CMARK_GHPRELANG,
     };
     static const char *fmts[] = {
         "html", "text", "xml", 
@@ -167,6 +170,24 @@ static int tclcmark_render_cmd(
             break;
         case TCL_CMARK_SAFE:
             cmark_opts |= CMARK_OPT_SAFE;
+            break;
+        case TCL_CMARK_FOOTNOTES:
+            cmark_opts |= CMARK_OPT_FOOTNOTES;
+            break;
+        case TCL_CMARK_SOURCEPOS:
+            cmark_opts |= CMARK_OPT_SOURCEPOS;
+            break;
+        case TCL_CMARK_HARDBREAKS:
+            cmark_opts |= CMARK_OPT_HARDBREAKS;
+            break;
+        case TCL_CMARK_NOBREAKS:
+            cmark_opts |= CMARK_OPT_NOBREAKS;
+            break;
+        case TCL_CMARK_LIBERALTAG:
+            cmark_opts |= CMARK_OPT_LIBERAL_HTML_TAG;
+            break;
+        case TCL_CMARK_GHPRELANG:
+            cmark_opts |= CMARK_OPT_GITHUB_PRE_LANG;
             break;
         case TCL_CMARK_WIDTH:
             if (++arg_index >= objc-1)
