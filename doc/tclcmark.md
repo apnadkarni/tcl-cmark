@@ -41,7 +41,7 @@ Option|Description
 ------|-----------
 `-utf8validate`|Checks and replaces invalid UTF-8 character in *`TEXT`* with the U+FFFD replacement character.
 `-smart`|Replaces straight quotes with curly quotes and double or triple hyphens with en dash and em dash respectively.
-`-ghprelang`|Uses Github style tags for code blocks that have a language attribute.
+`-ghprelang`|Uses Github style tags for code blocks that have a language attribute. This uses the `lang` attribute on the `<pre>` tag instead of a class on the `<code>` tag that wrap the block.
 `-liberaltag`|Be liberal in interpretation of HTML tags.
 `-footnotes`|Enable parsing of footnotes.
 
