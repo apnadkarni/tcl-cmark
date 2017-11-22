@@ -2,7 +2,6 @@
 #
 # Basic build, test and install
 #   nmake /s /nologo /f makefile.vc INSTALLDIR=c:\path\to\tcl
-#   nmake /s /nologo /f makefile.vc INSTALLDIR=c:\path\to\tcl test
 #   nmake /s /nologo /f makefile.vc INSTALLDIR=c:\path\to\tcl install
 #
 # For other build options (debug, static etc.)
@@ -12,12 +11,22 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #
-# NOTE: to build the cmark libraries if needed
-#   Run the nmake.bat batch file in the top level cmark directory.
+# The extension needs the cmark-ext libraries. Versions build with
+# Visual Studio 2017 are included in the repository and used by default.
+# Note older versions of VC++ may or may not work as cmark-gfm uses C99-isms.
+# 
+# If you do not want to, or cannot, use the included libraries,
+# specify the CMARKDIR macro on the command line to point to the
+# cmark-gfm directory holding the cmark-gfm installed files (not
+# cmark-gfm source) with include and libs directories.
+#
+# NOTE: to build the cmark-gfm libraries if needed
+# Run the nmake.bat batch file in the top level cmark-gfm directory.
 #   nmake
 #   nmake install
-# The build\windows directory will contain the include and libs. Note
-# then do a nmake clean and rebuild for the other architecture.
+# The build\windows directory within the cmark-gfm directory will contain
+# the include and libs. Point CMARKDIR to this.
+# Note: then do a nmake clean and rebuild for the other architecture.
 #------------------------------------------------------------------------------
 
 # The name of the package
