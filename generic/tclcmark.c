@@ -316,6 +316,62 @@ missing_arg_error: /* arg_index-1 should point to offending option! */
     
 }
 
+#if 0 /* Disabled because it relies on following internal structures */
+
+#include <stdbool.h>
+struct cmark_syntax_extension {
+  cmark_match_block_func          last_block_matches;
+  cmark_open_block_func           try_opening_block;
+  cmark_match_inline_func         match_inline;
+  cmark_inline_from_delim_func    insert_inline_from_delim;
+  cmark_llist                   * special_inline_chars;
+  char                          * name;
+  void                          * priv;
+  bool                            emphasis;
+  cmark_free_func                 free_function;
+  cmark_get_type_string_func      get_type_string_func;
+  cmark_can_contain_func          can_contain_func;
+  cmark_contains_inlines_func     contains_inlines_func;
+  cmark_common_render_func        commonmark_render_func;
+  cmark_common_render_func        plaintext_render_func;
+  cmark_common_render_func        latex_render_func;
+  cmark_common_render_func        man_render_func;
+  cmark_html_render_func          html_render_func;
+  cmark_html_filter_func          html_filter_func;
+  cmark_postprocess_func          postprocess_func;
+  cmark_opaque_free_func          opaque_free_func;
+  cmark_commonmark_escape_func    commonmark_escape_func;
+};
+cmark_llist *cmark_list_syntax_extensions(cmark_mem *);
+static int tclcmark_extensions_cmd(
+    ClientData clientData,	/* Not used. */
+    Tcl_Interp *interp,		/* Current interpreter */
+    int objc,			/* Number of arguments */
+    Tcl_Obj *const objv[]	/* Argument strings */
+    )
+{
+  cmark_llist *syntax_extensions;
+  cmark_llist *tmp;
+  Tcl_Obj *oexts;
+  cmark_mem *mem;
+
+  core_extensions_ensure_registered();
+
+  oexts = Tcl_NewListObj(0, NULL);
+  mem = cmark_get_default_mem_allocator();
+
+  syntax_extensions = cmark_list_syntax_extensions(mem);
+  for (tmp = syntax_extensions; tmp; tmp=tmp->next) {
+    struct cmark_syntax_extension *ext = (cmark_syntax_extension *) tmp->data;
+    Tcl_ListObjAppendElement(interp, oexts, Tcl_NewStringObj(ext->name, -1));
+  }
+
+  cmark_llist_free(mem, syntax_extensions);
+  Tcl_SetObjResult(interp, oexts);
+  return TCL_OK;
+}
+#endif
+
 /* Note the capitalization in Tclcmark_Init is as expected by Tcl loader */
 int Cmark_Init(Tcl_Interp *interp)
 {
@@ -331,6 +387,10 @@ int Cmark_Init(Tcl_Interp *interp)
                        TCL_CFGVAL_ENCODING);
     Tcl_CreateObjCommand(interp, "cmark::render", tclcmark_render_cmd,
 	    (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
-
+#if 0
+    Tcl_CreateObjCommand(interp, "cmark::extensions", 
+                         tclcmark_extensions_cmd,
+                         (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
+#endif
     return TCL_OK;
 }
