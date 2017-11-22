@@ -1,6 +1,6 @@
 # tcl-cmark
 
-This project implementes [doc/tclmark.md](Tcl bindings) to the cmark-gfm 
+This project implementes Tcl bindings to the cmark-gfm 
 Github Flavoured CommonMark/Markdown library.
 
 To build for Windows using Visual Studio compilers, see the
