@@ -1,0 +1,251 @@
+# NOTE: these tests only cover tclcmark functionality (options etc.). The
+# actual formatting is presumed to be covered by the cmark-gfm test suite.
+
+package require tcltest
+package require cmark
+
+set test_cases {
+    1.0 {
+        comment {Empty input}
+        input {}
+        output {}
+    }
+    1.1 {
+        comment {Default output format}
+        input "# Heading\nfirst para\n\nsecond para"
+        output "<h1>Heading</h1>\n<p>first para</p>\n<p>second para</p>\n"
+    }
+    1.2 {
+        options {-to html}
+        input "# Heading\nfirst para\n\nsecond para"
+        output "<h1>Heading</h1>\n<p>first para</p>\n<p>second para</p>\n"
+    }
+    1.3 {
+        options {-to latex}
+        input "# Heading\nfirst para\n\nsecond para"
+        output "\\section{Heading}\n\nfirst para\n\nsecond para\n"
+    }
+    1.4 {
+        options {-to xml}
+        input "# Heading\nfirst para\n\nsecond para"
+        output {<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document SYSTEM "CommonMark.dtd">
+<document xmlns="http://commonmark.org/xml/1.0">
+  <heading level="1">
+    <text>Heading</text>
+  </heading>
+  <paragraph>
+    <text>first para</text>
+  </paragraph>
+  <paragraph>
+    <text>second para</text>
+  </paragraph>
+</document>
+}
+    }
+    1.5 {
+        options {-to commonmark}
+        input "# Heading\nfirst para\n\nsecond para"
+        output "# Heading\n\nfirst para\n\nsecond para\n"
+    }
+    1.6 {
+        options {-to man}
+        input "# Heading\nfirst para\n\nsecond para"
+        output ".SH\nHeading\n.PP\nfirst para\n.PP\nsecond para\n"
+    }
+    1.7 {
+        options {-to text}
+        input "# Heading\nfirst para\n\nsecond para"
+        output "Heading\n\nfirst para\n\nsecond para\n"
+    }
+    2.0 {
+        comment {Invalid UTF8}
+        options {}
+        input "abc\0def"
+        output "<p>abc\0def</p>\n"
+    }
+    2.1 {
+        comment {Invalid UTF8 -utf8validate}
+        options -utf8validate
+        input "abc\0def"
+        output "<p>abc\ufffddef</p>\n"
+    }
+    3.0 {
+        comment {Quotes and dashes}
+        input {"en -- dash" 'em --- dash'}
+        output "<p>&quot;en -- dash&quot; 'em --- dash'</p>\n"
+    }
+    3.1 {
+        comment {Quotes and dashes -smart}
+        options -smart
+        input {"en -- dash" 'em --- dash'}
+        output "<p>\u201cen \u2013 dash\u201d \u2018em \u2014 dash\u2019</p>\n"
+    }
+    4.0 {
+        comment {Code blocks}
+        input "```C\nint foo();\n```"
+        output "<pre><code class=\"language-C\">int foo();\n</code></pre>\n"
+    }
+    4.1 {
+        comment {Code blocks -ghprelang}
+        options -ghprelang
+        input "```C\nint foo();\n```"
+        output "<pre lang=\"C\"><code>int foo();\n</code></pre>\n"
+    }
+    5.0 {
+        comment {Bogus tags}
+        input "This is a <bo?/gus> tag."
+        output "<p>This is a &lt;bo?/gus&gt; tag.</p>\n"
+    }
+    5.1 {
+        comment {Bogus tags -liberaltag}
+        options -liberaltag
+        input "This is a <bo?/gus> tag."
+        output "<p>This is a <bo?/gus> tag.</p>\n"
+    }
+    6.0 {
+        comment {Footnote}
+        input "A footnote\[^footnote\].\n\n\[^footnote]: This is a footnote"
+        output "<p>A footnote\[^footnote\].</p>\n<p>\[^footnote]: This is a footnote</p>\n"
+    }
+    6.1 {
+        comment {Footnote -footnotes}
+        options {-footnotes -to commonmark}
+        input "A footnote\[^footnote\].\n\n\[^footnote]: This is a footnote"
+        output "A footnote\[^1\].\n\n\[^1]:\n    This is a footnote\n"
+    }
+    7.0 {
+        comment {Inline html}
+        input "This is <b>inline html</b>."
+        output "<p>This is <b>inline html</b>.</p>\n"
+    }
+    7.1 {
+        comment {Inline html -safe}
+        options -safe
+        input "This is <b>inline html</b>."
+        output "<p>This is <!-- raw HTML omitted -->inline html<!-- raw HTML omitted -->.</p>\n"
+    }
+    8.0 {
+        comment {Width}
+        options {-to commonmark}
+        input "This is a long line with many words."
+        output "This is a long line with many words.\n"
+    } 
+    8.1 {
+        comment {Width -width}
+        options {-to commonmark -width 20}
+        input "This is a long line with many words."
+        output "This is a long line\nwith many words.\n"
+    } 
+    9.0 {
+        comment {Source position}
+        input "This is a long line with many words."
+        output "<p>This is a long line with many words.</p>\n"
+    } 
+    9.1 {
+        comment {Source position -sourcepos}
+        options {-sourcepos}
+        input "Some sample text."
+        output "<p data-sourcepos=\"1:1-1:17\">Some sample text.</p>\n"
+    } 
+    10.0 {
+        comment {Hardbreaks}
+        input "First line.\nSecond line."
+        output "<p>First line.\nSecond line.</p>\n"
+    }
+    10.1 {
+        comment {Hardbreaks -hardbreaks}
+        options -hardbreaks
+        input "First line.\nSecond line."
+        output "<p>First line.<br />\nSecond line.</p>\n"
+    }
+    11.0 {
+        comment {Nobreaks}
+        input "First line.\nSecond line."
+        output "<p>First line.\nSecond line.</p>\n"
+    }
+    11.1 {
+        comment {Nobreaks -nobreaks}
+        options -nobreaks
+        input "First line.\nSecond line."
+        output "<p>First line. Second line.</p>\n"
+    }
+    12.0 {
+        comment {Strikethrough}
+        input "This is ~false~true."
+        output "<p>This is ~false~true.</p>\n"
+    }
+    12.1 {
+        comment {Strikethrough -strikethrough}
+        options -strikethrough
+        input "This is ~false~true."
+        output "<p>This is <del>false</del>true.</p>\n"
+    }
+    13.0 {
+        comment {Tagfilter}
+        input "This is a <textarea>text area</textarea>."
+        output "<p>This is a <textarea>text area</textarea>.</p>\n"
+    }
+    13.1 {
+        comment {Tagfilter -tagfilter}
+        options -tagfilter
+        input "abc <textarea>text area</textarea> def\n"
+        output "<p>This is a &lt;textarea>text area&lt;/textarea>.</p>\n"
+    }
+    14.0 {
+        comment {Tables}
+        input "|Column 1|Column 2\n\|----|----\n|r0c0|r0c1\n"
+        output "<p>|Column 1|Column 2\n\|----|----\n|r0c0|r0c1</p>\n"
+    }
+    14.1 {
+        comment {Tables -table}
+        options -table
+        input "|Column 1|Column 2\n\|----|----\n|r0c0|r0c1\n"
+        output {<table>
+<thead>
+<tr>
+<th>Column 1</th>
+<th>Column 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>r0c0</td>
+<td>r0c1</td>
+</tr></tbody></table>
+}            
+    }
+    15.0 {
+        comment {Autolink}
+        input "Autolink to www.example.com."
+        output "<p>Autolink to www.example.com.</p>\n"
+    }
+    15.1 {
+        comment {Autolink -autolink}
+        options -autolink
+        input "Autolink to www.example.com."
+        output "<p>Autolink to <a href=\"http://www.example.com\">www.example.com</a>.</p>\n"
+    }
+}
+
+# TBD - add tests to check abbreviations of options and format values
+
+
+tcltest::test render-0 {No arguments} -body {
+    cmark::render
+} -result {wrong # args: should be "cmark::render ?options? COMMONMARKTEXT"} -returnCodes error
+
+proc generate_test {id config} {
+    lassign {} comment options input
+    set codes ok
+    dict with config {}
+    if {$comment eq ""} {
+        set comment $options
+    }
+    tcltest::test render-$id $comment -body "cmark::render $options {$input}" -result "$output" -returnCodes $codes
+}
+
+dict for {id config} $test_cases {
+    generate_test $id $config
+}
+
