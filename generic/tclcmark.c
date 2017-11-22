@@ -20,6 +20,11 @@
 
 extern DLLEXPORT int Cmark_Init(Tcl_Interp * interp);
 
+Tcl_Config tclcmark_config[] = {
+    {"cmark,version", CMARK_VERSION_STRING},
+    {NULL, NULL}
+};
+
 static void tclcmark_memory_panic()
 {
     Tcl_Panic("Memory allocation request exceeds limit.");
@@ -322,6 +327,8 @@ int Cmark_Init(Tcl_Interp *interp)
     if (Tcl_PkgProvide(interp, PACKAGE_TCLNAME, PACKAGE_VERSION) != TCL_OK) {
 	return TCL_ERROR;
     }
+    Tcl_RegisterConfig(interp, PACKAGE_TCLNAME, tclcmark_config, 
+                       TCL_CFGVAL_ENCODING);
     Tcl_CreateObjCommand(interp, "cmark::render", tclcmark_render_cmd,
 	    (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
 
