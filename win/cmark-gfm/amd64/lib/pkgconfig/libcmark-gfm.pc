@@ -1,0 +1,10 @@
+prefix=C:/src/cmark-gfm/build/windows
+exec_prefix=C:/src/cmark-gfm/build/windows
+libdir=C:/src/cmark-gfm/build/windows/lib
+includedir=C:/src/cmark-gfm/build/windows/include
+
+Name: libcmark-gfm
+Description: CommonMark parsing, rendering, and manipulation with GitHub Flavored Markdown extensions
+Version: 0.28.3.gfm.11
+Libs: -L${libdir} -lcmark-gfm
+Cflags: -I${includedir}
