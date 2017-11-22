@@ -75,7 +75,7 @@ static int tclcmark_load_extension(
     cmark_syntax_extension *ext = cmark_find_syntax_extension(name);
     if (ext == NULL) {
         Tcl_AppendResult(interp, "Error loading CommonMark extension ", 
-                             "strikethrough", NULL);
+                         name, NULL);
         return TCL_ERROR;
     }
     cmark_parser_attach_syntax_extension(parser, ext);
@@ -238,7 +238,6 @@ static int tclcmark_render_cmd(
             goto vamoose;
     }
 
-    
     cmark_parser_feed(parser, cmark_text, nbytes);
 
     document = cmark_parser_finish(parser);
