@@ -138,6 +138,7 @@ static int tclcmark_render_cmd(
     int tagfilter = 0;
     cmark_node *document = NULL;
     cmark_parser *parser = NULL;
+    cmark_llist *syntax_extensions;
     int nbytes, res = TCL_ERROR;
     char *cmark_text, *rendered;
     Tcl_Obj *o;
@@ -251,8 +252,9 @@ static int tclcmark_render_cmd(
     
     switch (render_fmt) {
         case TCL_CMARK_HTML: 
+            syntax_extensions = cmark_parser_get_syntax_extensions(parser);
             rendered = cmark_render_html_with_mem(document, cmark_opts, 
-                                                  NULL,
+                                                  syntax_extensions,
                                                   &tclcmark_allocator);
             break;
         case TCL_CMARK_TEXT:

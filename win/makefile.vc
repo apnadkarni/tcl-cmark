@@ -27,6 +27,22 @@
 # The build\windows directory within the cmark-gfm directory will contain
 # the include and libs. Point CMARKDIR to this.
 # Note: then do a nmake clean and rebuild for the other architecture.
+#
+# DEBUGGING:
+# To debug, you need to build both tclcmark as well cmark-gfm libraries
+# with symbol information and optimization turned off. The following is
+# not ideal but gets the job done for the most part.
+# First, build cmark-gfm with the BUILD_TYPE=debug command line macro
+#    nmake BUILD_TYPE=debug
+#    nmake BUILD_TYPE=debug install
+# Then build tclcmark as a *release* build but with optimization off
+# and with CMARKDIR pointing to the debug cmark you just built
+#    nmake /s /nologo /f makefile.vc INSTALLDIR=c:\path\to\tcl OPTS=pdbs cdebug="-Zi -Od" CMARKDIR=c:\path\to\cmark\build\windows
+# This actually lands up with Tcl and tclcmark using the release runtime and
+# cmark libraries using the debug runtime leading to potential issues sharing
+# memory, file descriptors etc. The "cleaner" way is to built tclcmark
+# with the OPTS=symbols,pdbs option which will also link to the debug runtime
+# but then you also need to do that with the Tcl build as well.
 #------------------------------------------------------------------------------
 
 # The name of the package
