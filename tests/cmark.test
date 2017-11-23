@@ -181,6 +181,12 @@ set test_cases {
         input "This is ~false~true."
         output "<p>This is <del>false</del>true.</p>\n"
     }
+    12.2 {
+        comment {Strikethrough -gfm}
+        options -gfm
+        input "This is ~false~true."
+        output "<p>This is <del>false</del>true.</p>\n"
+    }
     13.0 {
         comment {Tagfilter}
         input "This is a <textarea>text area</textarea>."
@@ -189,7 +195,13 @@ set test_cases {
     13.1 {
         comment {Tagfilter -tagfilter}
         options -tagfilter
-        input "abc <textarea>text area</textarea> def\n"
+        input "This is a <textarea>text area</textarea>."
+        output "<p>This is a &lt;textarea>text area&lt;/textarea>.</p>\n"
+    }
+    13.2 {
+        comment {Tagfilter -gfm}
+        options -gfm
+        input "This is a <textarea>text area</textarea>."
         output "<p>This is a &lt;textarea>text area&lt;/textarea>.</p>\n"
     }
     14.0 {
@@ -200,6 +212,24 @@ set test_cases {
     14.1 {
         comment {Tables -table}
         options -table
+        input "|Column 1|Column 2\n\|----|----\n|r0c0|r0c1\n"
+        output {<table>
+<thead>
+<tr>
+<th>Column 1</th>
+<th>Column 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>r0c0</td>
+<td>r0c1</td>
+</tr></tbody></table>
+}            
+    }
+    14.2 {
+        comment {Tables -gfm}
+        options -gfm
         input "|Column 1|Column 2\n\|----|----\n|r0c0|r0c1\n"
         output {<table>
 <thead>
@@ -226,6 +256,12 @@ set test_cases {
         input "Autolink to www.example.com."
         output "<p>Autolink to <a href=\"http://www.example.com\">www.example.com</a>.</p>\n"
     }
+    15.2 {
+        comment {Autolink -gfm}
+        options -gfm
+        input "Autolink to www.example.com."
+        output "<p>Autolink to <a href=\"http://www.example.com\">www.example.com</a>.</p>\n"
+    }
 }
 
 # TBD - add tests to check abbreviations of options and format values
@@ -249,3 +285,4 @@ dict for {id config} $test_cases {
     generate_test $id $config
 }
 
+::tcltest::cleanupTests
