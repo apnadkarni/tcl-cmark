@@ -19,7 +19,7 @@ dnl	to configure the system for the local environment.
 # so that we create the export library with the dll.
 #-----------------------------------------------------------------------
 
-AC_INIT([tclcmark], [0.1])
+AC_INIT([tclcmark], [1.0])
 
 PACKAGE_TCLNAME="cmark"
 AC_SUBST(PACKAGE_TCLNAME)
