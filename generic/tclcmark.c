@@ -385,8 +385,7 @@ int Cmark_Init(Tcl_Interp *interp)
     if (Tcl_PkgProvide(interp, PACKAGE_TCLNAME, PACKAGE_VERSION) != TCL_OK) {
 	return TCL_ERROR;
     }
-    Tcl_RegisterConfig(interp, PACKAGE_TCLNAME, tclcmark_config, 
-                       TCL_CFGVAL_ENCODING);
+    Tcl_RegisterConfig(interp, PACKAGE_TCLNAME, tclcmark_config, "iso8859-1");
     Tcl_CreateObjCommand(interp, "cmark::render", tclcmark_render_cmd,
 	    (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
 #if 0
