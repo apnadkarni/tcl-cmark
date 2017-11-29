@@ -63,6 +63,6 @@ PRJ_LIBS = $(CMARKDIR)\lib\cmark-gfm_static.lib $(CMARKDIR)\lib\cmark-gfmextensi
 
 !include "$(_RULESDIR)\targets.vc"
 
+install: default-install-docs-html
 pkgindex: default-pkgindex-tea
 
-# install: default-install-docs-n
