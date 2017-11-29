@@ -278,6 +278,9 @@ static int tclcmark_render_cmd(
         rendered = cmark_render_man_with_mem(document, cmark_opts, 
                                              width, &tclcmark_allocator);
         break;
+    default:
+        Tcl_Panic("Unknown output format");
+        rendered = NULL; /* To keep compiler happy about uninited use below */
     }
 
     o = Tcl_NewObj();
