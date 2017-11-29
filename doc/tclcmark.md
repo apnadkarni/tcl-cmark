@@ -39,23 +39,23 @@ of *`TEXT`*.
 
 Option|Description
 ------|-----------
-`-utf8validate`|Checks and replaces invalid UTF-8 character in *`TEXT`* with the U+FFFD replacement character.
-`-smart`|Replaces straight quotes with curly quotes and double or triple hyphens with en dash and em dash respectively.
+`-footnotes`|Enable parsing of footnotes.
 `-ghprelang`|Uses Github style tags for code blocks that have a language attribute. This uses the `lang` attribute on the `<pre>` tag instead of a class on the `<code>` tag that wrap the block.
 `-liberaltag`|Be liberal in interpretation of HTML tags.
-`-footnotes`|Enable parsing of footnotes.
+`-smart`|Replaces straight quotes with curly quotes and double or triple hyphens with en dash and em dash respectively.
+`-utf8validate`|Checks and replaces invalid UTF-8 character in *`TEXT`* with the U+FFFD replacement character.
 
 ### Rendering
 The following options control the rendering of the input text.
 
 Option|Description
 ------|-----------
-`-to` *`FORMAT`*|Specifies the output format. *`FORMAT`* must be one of `html`, `latex`, `man`, `xml`, `commonmark` or `text`.
-`-safe`|Removes raw HTML by placeholder comments and unsafe links such as `javascript:`, `vbscript:` etc. by empty strings.
-`-width`|Specifies a max line width for wrapping. The default of `0` implies no wrapping. Only applies to CommonMark, Latex and man output formats.
-`-sourcepos`|Includes the `data-sourcepos` attribute on all block elements.
 `-hardbreaks`|Renders soft line breaks as hard line breaks.
 `-nobreaks`|Renders soft line breaks as spaces.
+`-safe`|Removes raw HTML by placeholder comments and unsafe links such as `javascript:`, `vbscript:` etc. by empty strings.
+`-sourcepos`|Includes the `data-sourcepos` attribute on all block elements.
+`-to` *`FORMAT`*|Specifies the output format. *`FORMAT`* must be one of `html`, `latex`, `man`, `xml`, `commonmark` or `text`.
+`-width`|Specifies a max line width for wrapping. The default of `0` implies no wrapping. Only applies to CommonMark, Latex and man output formats.
 
 Note that the HTML output format is a fragment and does not include any HTML 
 header boilerplate.
@@ -71,9 +71,9 @@ Option|Description
 ------|-----------
 `-gfm`|Enables all GFM extensions. Equivalent to specifying all options below.
 `-autolink`|Enables [autolink](https://github.github.com/gfm/#autolinks-extension-) enhancements.
-`-tagfilter`|Enables the [tagfilter](https://github.github.com/gfm/#disallowed-raw-html-extension-) extension that disallows certain HTML tags.
-`-table`|Enables the [table](https://github.github.com/gfm/#tables-extension-) for formatting tables.
 `-strikethrough`|Enables the [strikethrough](https://github.github.com/gfm/#strikethrough-extension-) extension for wrapping strikethrough text in tilde `~` characters.
+`-table`|Enables the [table](https://github.github.com/gfm/#tables-extension-) for formatting tables.
+`-tagfilter`|Enables the [tagfilter](https://github.github.com/gfm/#disallowed-raw-html-extension-) extension that disallows certain HTML tags.
 
 ## AUTHOR
 
