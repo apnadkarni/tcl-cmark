@@ -1,4 +1,4 @@
-package require cmark
+set ver [package require cmark]
 
 set docdir [file join [file dirname [file dirname [info script]]] doc]
 
@@ -15,5 +15,10 @@ close $fd
 
 set fd [open [file join $docdir tclcmark.n] w]
 fconfigure $fd -encoding utf-8
+puts $fd {'\"}
+puts $fd {`\" Copyright (c) 2017 Ashok P. Nadkarni}
+puts $fd {'\"}
+puts $fd {'\" See file LICENSE in source for licensing terms.}
+puts $fd ".TH tclcmark n tclcmark $ver \"Tcl interface to CommonMark\""
 puts $fd [cmark::render -to man -gfm -safe -smart $mdtext]
 close $fd

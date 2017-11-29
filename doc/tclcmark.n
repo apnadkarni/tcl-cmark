@@ -1,3 +1,8 @@
+'\"
+`\" Copyright (c) 2017 Ashok P. Nadkarni
+'\"
+'\" See file LICENSE in source for licensing terms.
+.TH tclcmark n tclcmark 1.0 "Tcl interface to CommonMark"
 .SH
 NAME
 .PP
