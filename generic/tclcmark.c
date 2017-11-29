@@ -251,33 +251,33 @@ static int tclcmark_render_cmd(
         goto document_error;
     
     switch (render_fmt) {
-        case TCL_CMARK_HTML: 
-            syntax_extensions = cmark_parser_get_syntax_extensions(parser);
-            rendered = cmark_render_html_with_mem(document, cmark_opts, 
-                                                  syntax_extensions,
-                                                  &tclcmark_allocator);
-            break;
-        case TCL_CMARK_TEXT:
-            rendered = cmark_render_plaintext_with_mem(document, cmark_opts, 
-                                                       width, &tclcmark_allocator);
-            break;
-        case TCL_CMARK_XML:
-            rendered = cmark_render_xml_with_mem(document, cmark_opts, 
-                                                 &tclcmark_allocator);
-            break;
-        case TCL_CMARK_LATEX:
-            rendered = cmark_render_latex_with_mem(document, cmark_opts, 
+    case TCL_CMARK_HTML: 
+        syntax_extensions = cmark_parser_get_syntax_extensions(parser);
+        rendered = cmark_render_html_with_mem(document, cmark_opts, 
+                                              syntax_extensions,
+                                              &tclcmark_allocator);
+        break;
+    case TCL_CMARK_TEXT:
+        rendered = cmark_render_plaintext_with_mem(document, cmark_opts, 
                                                    width, &tclcmark_allocator);
-            break;
-        case TCL_CMARK_CMARK:
-            rendered = cmark_render_commonmark_with_mem(document, cmark_opts, 
-                                                        width,
-                                                        &tclcmark_allocator);
-            break;
-        case TCL_CMARK_MAN:
-            rendered = cmark_render_man_with_mem(document, cmark_opts, 
-                                                 width, &tclcmark_allocator);
-            break;
+        break;
+    case TCL_CMARK_XML:
+        rendered = cmark_render_xml_with_mem(document, cmark_opts, 
+                                             &tclcmark_allocator);
+        break;
+    case TCL_CMARK_LATEX:
+        rendered = cmark_render_latex_with_mem(document, cmark_opts, 
+                                               width, &tclcmark_allocator);
+        break;
+    case TCL_CMARK_CMARK:
+        rendered = cmark_render_commonmark_with_mem(document, cmark_opts, 
+                                                    width,
+                                                    &tclcmark_allocator);
+        break;
+    case TCL_CMARK_MAN:
+        rendered = cmark_render_man_with_mem(document, cmark_opts, 
+                                             width, &tclcmark_allocator);
+        break;
     }
 
     o = Tcl_NewObj();
