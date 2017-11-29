@@ -28,14 +28,14 @@ The primary command exported from the package is the `render` command.
     cmark::render ?options? *TEXT*
 ```
 
-The command parses *`TEXT`* which should be in CommonMark format and
+The command parses `TEXT` which should be in CommonMark format and
 returns it rendered in one of several different output formats.  Currently
 supported output formats are HTML, Latex, Groff manpage, CommonMark
 XML, CommonMark and plain text.
 
 ### Parsing
 The table below summarizes the available options that affect parsing
-of *`TEXT`*.
+of `TEXT`.
 
 Option|Description
 ------|-----------
@@ -43,9 +43,10 @@ Option|Description
 `-ghprelang`|Uses Github style tags for code blocks that have a language attribute. This uses the `lang` attribute on the `<pre>` tag instead of a class on the `<code>` tag that wrap the block.
 `-liberaltag`|Be liberal in interpretation of HTML tags.
 `-smart`|Replaces straight quotes with curly quotes and double or triple hyphens with en dash and em dash respectively.
-`-utf8validate`|Checks and replaces invalid UTF-8 character in *`TEXT`* with the U+FFFD replacement character.
+`-utf8validate`|Checks and replaces invalid UTF-8 character in `TEXT` with the U+FFFD replacement character.
 
 ### Rendering
+
 The following options control the rendering of the input text.
 
 Option|Description
@@ -54,7 +55,7 @@ Option|Description
 `-nobreaks`|Renders soft line breaks as spaces.
 `-safe`|Removes raw HTML by placeholder comments and unsafe links such as `javascript:`, `vbscript:` etc. by empty strings.
 `-sourcepos`|Includes the `data-sourcepos` attribute on all block elements.
-`-to` *`FORMAT`*|Specifies the output format. *`FORMAT`* must be one of `html`, `latex`, `man`, `xml`, `commonmark` or `text`.
+`-to` `FORMAT`|Specifies the output format. `FORMAT` must be one of `html`, `latex`, `man`, `xml`, `commonmark` or `text`.
 `-width`|Specifies a max line width for wrapping. The default of `0` implies no wrapping. Only applies to CommonMark, Latex and man output formats.
 
 Note that the HTML output format is a fragment and does not include any HTML 
