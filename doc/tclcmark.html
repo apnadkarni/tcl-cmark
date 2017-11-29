@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tcl cmark extension</title>
+</head>
+<body>
+<h1>NAME</h1>
+<p><strong>cmark</strong> – Tcl interface to CommonMark / Github Flavored Markdown</p>
+<h2>SYNOPSIS</h2>
+<pre><code>    package require cmark
+    cmark::render ?options? TEXT
+</code></pre>
+<h2>DESCRIPTION</h2>
+<p>The <code>cmark</code> package provides a Tcl script level interface to the
+<a href="https://github.com/github/cmark">cmark-gfm</a> library for parsing
+and rendering <a href="http://commonmark.org/">CommonMark</a> formatted text
+which is a formalized specification of the commonly used Markdown syntax.
+The library includes support for Github extensions which add several
+features to the original specification. The extended syntax
+accepted by the library is described in the
+<a href="https://github.github.com/gfm/">Github Flavored Markdown</a>
+specification. Here we refer to all these syntax variants collectively
+as CommonMark.</p>
+<p>The primary command exported from the package is the <code>render</code> command.</p>
+<blockquote>
+</blockquote>
+<pre><code>    cmark::render ?options? *TEXT*
+</code></pre>
+<p>The command parses <em><code>TEXT</code></em> which should be in CommonMark format and
+returns it rendered in one of several different output formats.  Currently
+supported output formats are HTML, Latex, Groff manpage, CommonMark
+XML, CommonMark and plain text.</p>
+<h3>Parsing</h3>
+<p>The table below summarizes the available options that affect parsing
+of <em><code>TEXT</code></em>.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-footnotes</code></td>
+<td>Enable parsing of footnotes.</td>
+</tr>
+<tr>
+<td><code>-ghprelang</code></td>
+<td>Uses Github style tags for code blocks that have a language attribute. This uses the <code>lang</code> attribute on the <code>&lt;pre&gt;</code> tag instead of a class on the <code>&lt;code&gt;</code> tag that wrap the block.</td>
+</tr>
+<tr>
+<td><code>-liberaltag</code></td>
+<td>Be liberal in interpretation of HTML tags.</td>
+</tr>
+<tr>
+<td><code>-smart</code></td>
+<td>Replaces straight quotes with curly quotes and double or triple hyphens with en dash and em dash respectively.</td>
+</tr>
+<tr>
+<td><code>-utf8validate</code></td>
+<td>Checks and replaces invalid UTF-8 character in <em><code>TEXT</code></em> with the U+FFFD replacement character.</td>
+</tr></tbody></table>
+<h3>Rendering</h3>
+<p>The following options control the rendering of the input text.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-hardbreaks</code></td>
+<td>Renders soft line breaks as hard line breaks.</td>
+</tr>
+<tr>
+<td><code>-nobreaks</code></td>
+<td>Renders soft line breaks as spaces.</td>
+</tr>
+<tr>
+<td><code>-safe</code></td>
+<td>Removes raw HTML by placeholder comments and unsafe links such as <code>javascript:</code>, <code>vbscript:</code> etc. by empty strings.</td>
+</tr>
+<tr>
+<td><code>-sourcepos</code></td>
+<td>Includes the <code>data-sourcepos</code> attribute on all block elements.</td>
+</tr>
+<tr>
+<td><code>-to</code> <em><code>FORMAT</code></em></td>
+<td>Specifies the output format. <em><code>FORMAT</code></em> must be one of <code>html</code>, <code>latex</code>, <code>man</code>, <code>xml</code>, <code>commonmark</code> or <code>text</code>.</td>
+</tr>
+<tr>
+<td><code>-width</code></td>
+<td>Specifies a max line width for wrapping. The default of <code>0</code> implies no wrapping. Only applies to CommonMark, Latex and man output formats.</td>
+</tr></tbody></table>
+<p>Note that the HTML output format is a fragment and does not include any HTML
+header boilerplate.</p>
+<h3>Enabling GFM extensions</h3>
+<p>By default, the command adheres to the <a href="http://commonmark.org/">CommonMark</a>
+specification. Various extensions specified in
+<a href="https://github.github.com/gfm/">Github Flavored Markdown</a> (GFM)
+may be enabled through the options below.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-gfm</code></td>
+<td>Enables all GFM extensions. Equivalent to specifying all options below.</td>
+</tr>
+<tr>
+<td><code>-autolink</code></td>
+<td>Enables <a href="https://github.github.com/gfm/#autolinks-extension-">autolink</a> enhancements.</td>
+</tr>
+<tr>
+<td><code>-strikethrough</code></td>
+<td>Enables the <a href="https://github.github.com/gfm/#strikethrough-extension-">strikethrough</a> extension for wrapping strikethrough text in tilde <code>~</code> characters.</td>
+</tr>
+<tr>
+<td><code>-table</code></td>
+<td>Enables the <a href="https://github.github.com/gfm/#tables-extension-">table</a> for formatting tables.</td>
+</tr>
+<tr>
+<td><code>-tagfilter</code></td>
+<td>Enables the <a href="https://github.github.com/gfm/#disallowed-raw-html-extension-">tagfilter</a> extension that disallows certain HTML tags.</td>
+</tr></tbody></table>
+<h2>AUTHOR</h2>
+<p>Ashok P. Nadkarni</p>
+
+</body></html>
