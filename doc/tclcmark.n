@@ -31,44 +31,96 @@ The primary command exported from the package is the \f[C]render\f[] command.
 .IP
 .nf
 \f[C]
-    cmark::render ?options? *TEXT*
+    cmark::render ?options? TEXT
 \f[]
 .fi
 .PP
-The command parses \f[I]\f[C]TEXT\f[]\f[] which should be in CommonMark format and
+The command parses \f[C]TEXT\f[] which should be in CommonMark format and
 returns it rendered in one of several different output formats.  Currently
 supported output formats are HTML, Latex, Groff manpage, CommonMark
 XML, CommonMark and plain text.
 .SS
 Parsing
 .PP
-The table below summarizes the available options that affect parsing
-of \f[I]\f[C]TEXT\f[]\f[].
-.TS
-tab(@);
-cc.
-Option@Description
-\f[C]\-footnotes\f[]@Enable parsing of footnotes.
-\f[C]\-ghprelang\f[]@Uses Github style tags for code blocks that have a language attribute. This uses the \f[C]lang\f[] attribute on the \f[C]<pre>\f[] tag instead of a class on the \f[C]<code>\f[] tag that wrap the block.
-\f[C]\-liberaltag\f[]@Be liberal in interpretation of HTML tags.
-\f[C]\-smart\f[]@Replaces straight quotes with curly quotes and double or triple hyphens with en dash and em dash respectively.
-\f[C]\-utf8validate\f[]@Checks and replaces invalid UTF\-8 character in \f[I]\f[C]TEXT\f[]\f[] with the U+FFFD replacement character.
-.TE
+The following options affect parsing of \f[C]TEXT\f[].
+.PP
+\f[C]\-footnotes\f[]
+.RS
+.PP
+Enable parsing of footnotes.
+.RE
+.PP
+\f[C]\-ghprelang\f[]
+.RS
+.PP
+Uses Github style tags for code blocks that have a language
+attribute.  This uses the \f[C]lang\f[] attribute on the \f[C]<pre>\f[] tag instead
+of a class on the \f[C]<code>\f[] tag that wrap the block.
+.RE
+.PP
+\f[C]\-liberaltag\f[]
+.RS
+.PP
+Be liberal in interpretation of HTML tags.
+.RE
+.PP
+\f[C]\-smart\f[]
+.RS
+.PP
+Replaces straight quotes with curly quotes and double or triple
+hyphens with en dash and em dash respectively.
+.RE
+.PP
+\f[C]\-utf8validate\f[]
+.RS
+.PP
+Checks and replaces invalid UTF\-8 character in \f[C]TEXT\f[] with the U+FFFD
+replacement character.
+.RE
 .SS
 Rendering
 .PP
 The following options control the rendering of the input text.
-.TS
-tab(@);
-cc.
-Option@Description
-\f[C]\-hardbreaks\f[]@Renders soft line breaks as hard line breaks.
-\f[C]\-nobreaks\f[]@Renders soft line breaks as spaces.
-\f[C]\-safe\f[]@Removes raw HTML by placeholder comments and unsafe links such as \f[C]javascript:\f[], \f[C]vbscript:\f[] etc. by empty strings.
-\f[C]\-sourcepos\f[]@Includes the \f[C]data\-sourcepos\f[] attribute on all block elements.
-\f[C]\-to\f[] \f[I]\f[C]FORMAT\f[]\f[]@Specifies the output format. \f[I]\f[C]FORMAT\f[]\f[] must be one of \f[C]html\f[], \f[C]latex\f[], \f[C]man\f[], \f[C]xml\f[], \f[C]commonmark\f[] or \f[C]text\f[].
-\f[C]\-width\f[]@Specifies a max line width for wrapping. The default of \f[C]0\f[] implies no wrapping. Only applies to CommonMark, Latex and man output formats.
-.TE
+.PP
+\f[C]\-hardbreaks\f[]
+.RS
+.PP
+Renders soft line breaks as hard line breaks.
+.RE
+.PP
+\f[C]\-nobreaks\f[]
+.RS
+.PP
+Renders soft line breaks as spaces.
+.RE
+.PP
+\f[C]\-safe\f[]
+.RS
+.PP
+Removes raw HTML by placeholder comments and unsafe links such as
+\f[C]javascript :\f[], \f[C]vbscript:\f[] etc. by empty strings.
+.RE
+.PP
+\f[C]\-sourcepos\f[]
+.RS
+.PP
+Includes the \f[C]data\-sourcepos\f[] attribute on all block elements.
+.RE
+.PP
+\f[C]\-to\f[] \f[C]FORMAT\f[]
+.RS
+.PP
+Specifies the output format. \f[C]FORMAT\f[] must be one of \f[C]html\f[], \f[C]latex\f[],
+\f[C]man\f[] , \f[C]xml\f[], \f[C]commonmark\f[] or \f[C]text\f[].
+.RE
+.PP
+\f[C]\-width\f[]
+.RS
+.PP
+Specifies a max line width for wrapping. The default of \f[C]0\f[] implies
+no wrapping. Only applies to CommonMark, Latex and man output
+formats.
+.RE
 .PP
 Note that the HTML output format is a fragment and does not include any HTML
 header boilerplate.
@@ -79,16 +131,39 @@ By default, the command adheres to the CommonMark (http://commonmark.org/)
 specification. Various extensions specified in
 Github Flavored Markdown (https://github.github.com/gfm/) (GFM)
 may be enabled through the options below.
-.TS
-tab(@);
-cc.
-Option@Description
-\f[C]\-gfm\f[]@Enables all GFM extensions. Equivalent to specifying all options below.
-\f[C]\-autolink\f[]@Enables autolink (https://github.github.com/gfm/#autolinks\-extension\-) enhancements.
-\f[C]\-strikethrough\f[]@Enables the strikethrough (https://github.github.com/gfm/#strikethrough\-extension\-) extension for wrapping strikethrough text in tilde \f[C]~\f[] characters.
-\f[C]\-table\f[]@Enables the table (https://github.github.com/gfm/#tables\-extension\-) for formatting tables.
-\f[C]\-tagfilter\f[]@Enables the tagfilter (https://github.github.com/gfm/#disallowed\-raw\-html\-extension\-) extension that disallows certain HTML tags.
-.TE
+.PP
+\f[C]\-gfm\f[]
+.RS
+.PP
+Enables all GFM extensions. Equivalent to specifying all options below.
+.RE
+.PP
+\f[C]\-autolink\f[]
+.RS
+.PP
+Enables autolink (https://github.github.com/gfm/#autolinks\-extension\-) enhancements.
+.RE
+.PP
+\f[C]\-strikethrough\f[]
+.RS
+.PP
+Enables the strikethrough (https://github.github.com/gfm/#strikethrough\-extension\-)
+extension for wrapping strikethrough text in tilde \f[C]~\f[] characters.
+.RE
+.PP
+\f[C]\-table\f[]
+.RS
+.PP
+Enables the table (https://github.github.com/gfm/#tables\-extension\-)
+for formatting tables.
+.RE
+.PP
+\f[C]\-tagfilter\f[]
+.RS
+.PP
+Enables the tagfilter (https://github.github.com/gfm/#disallowed\-raw\-html\-extension\-)
+extension that disallows certain HTML tags.
+.RE
 .SS
 AUTHOR
 .PP

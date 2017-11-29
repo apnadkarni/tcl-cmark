@@ -1,6 +1,6 @@
 package require cmark
 
-set docdir [file join [info script] .. .. doc]
+set docdir [file join [file dirname [file dirname [info script]]] doc]
 
 set fd [open [file join $docdir tclcmark.md]]
 set mdtext [read $fd]
