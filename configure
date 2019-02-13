@@ -5352,10 +5352,10 @@ $as_echo_n "checking for cmark-gfm installation... " >&6; }
 $as_echo "found" >&6; }
         if test "${TEA_PLATFORM}" = "windows" ; then
             CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm`"
-            CMARK_LIBS="-Wl,-Bstatic `pkg-config --static --libs libcmark-gfm` -lcmark-gfmextensions -Wl,-Bdynamic"
+            CMARK_LIBS="-Wl,-Bstatic `pkg-config --static --libs libcmark-gfm` -lcmark-gfm-extensions -Wl,-Bdynamic"
         else
             CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm`"
-            CMARK_LIBS="`pkg-config --libs libcmark-gfm` -lcmark-gfmextensions"
+            CMARK_LIBS="`pkg-config --libs libcmark-gfm` -lcmark-gfm-extensions"
         fi
     else
         as_fn_error $? "The required lib libcmark-gfm not found" "$LINENO" 5

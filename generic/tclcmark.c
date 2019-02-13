@@ -15,13 +15,13 @@
 #include <string.h>
 #include <limits.h>
 #include "tcl.h"
-#include "cmark.h"
-#include "core-extensions.h"
+#include "cmark-gfm.h"
+#include "cmark-gfm-core-extensions.h"
 
 extern DLLEXPORT int Cmark_Init(Tcl_Interp * interp);
 
 Tcl_Config tclcmark_config[] = {
-    {"cmark,version", CMARK_VERSION_STRING},
+    {"cmark,version", CMARK_GFM_VERSION_STRING},
     {NULL, NULL}
 };
 
@@ -104,20 +104,20 @@ static int tclcmark_render_cmd(
     int arg_index;
     static const char *opts[] = {
         "-to", "-utf8validate", "-smart", 
-        "-safe", "-width", "-footnotes",
+        "-unsafe", "-width", "-footnotes",
         "-gfm", "-table", "-strikethrough",
         "-autolink", "-tagfilter",
         "-sourcepos", "-hardbreaks", "-nobreaks",
-        "-liberaltag", "-ghprelang",
+        "-liberaltag", "-ghprelang", "-tasklist",
         NULL,
     };
     enum optflags {
         TCL_CMARK_TO, TCL_CMARK_VALIDATE_UTF8, TCL_CMARK_SMART,
-        TCL_CMARK_SAFE, TCL_CMARK_WIDTH, TCL_CMARK_FOOTNOTES,
+        TCL_CMARK_UNSAFE, TCL_CMARK_WIDTH, TCL_CMARK_FOOTNOTES,
         TCL_CMARK_GFM, TCL_CMARK_TABLE, TCL_CMARK_STRIKETHROUGH,
         TCL_CMARK_AUTOLINK, TCL_CMARK_TAGFILTER,
         TCL_CMARK_SOURCEPOS, TCL_CMARK_HARDBREAKS, TCL_CMARK_NOBREAKS,
-        TCL_CMARK_LIBERALTAG, TCL_CMARK_GHPRELANG,
+        TCL_CMARK_LIBERALTAG, TCL_CMARK_GHPRELANG, TCL_CMARK_TASKLIST
     };
     static const char *fmts[] = {
         "html", "text", "xml", 
@@ -136,6 +136,7 @@ static int tclcmark_render_cmd(
     int strikethrough = 0;
     int autolink = 0;
     int tagfilter = 0;
+    int tasklist = 0;
     cmark_node *document = NULL;
     cmark_parser *parser = NULL;
     cmark_llist *syntax_extensions;
@@ -148,7 +149,7 @@ static int tclcmark_render_cmd(
         return TCL_ERROR;
     }
 
-    core_extensions_ensure_registered();
+    cmark_gfm_core_extensions_ensure_registered();
     
     for (arg_index = 1; arg_index < objc-1; ++arg_index) {
 	int opt_index;
@@ -173,8 +174,8 @@ static int tclcmark_render_cmd(
         case TCL_CMARK_SMART:
             cmark_opts |= CMARK_OPT_SMART;
             break;
-        case TCL_CMARK_SAFE:
-            cmark_opts |= CMARK_OPT_SAFE;
+        case TCL_CMARK_UNSAFE:
+            cmark_opts |= CMARK_OPT_UNSAFE;
             break;
         case TCL_CMARK_FOOTNOTES:
             cmark_opts |= CMARK_OPT_FOOTNOTES;
@@ -208,6 +209,7 @@ static int tclcmark_render_cmd(
         case TCL_CMARK_STRIKETHROUGH: strikethrough = 1; break;
         case TCL_CMARK_AUTOLINK:      autolink = 1; break;
         case TCL_CMARK_TAGFILTER:     tagfilter = 1; break;
+        case TCL_CMARK_TASKLIST:     tasklist = 1; break;
         }
     }
 
@@ -244,6 +246,12 @@ static int tclcmark_render_cmd(
             goto vamoose;
     }
 
+    if (gfm || tasklist) {
+        fprintf(stderr, "Using tasklist extensions");
+        res = tclcmark_load_extension(interp, parser, "tasklist");
+        if (res != TCL_OK)
+            goto vamoose;
+    }
     cmark_parser_feed(parser, cmark_text, nbytes);
 
     document = cmark_parser_finish(parser);
@@ -360,7 +368,7 @@ static int tclcmark_extensions_cmd(
   Tcl_Obj *oexts;
   cmark_mem *mem;
 
-  core_extensions_ensure_registered();
+  cmark_gfm_core_extensions_ensure_registered();
 
   oexts = Tcl_NewListObj(0, NULL);
   mem = cmark_get_default_mem_allocator();
