@@ -68,7 +68,6 @@ TEA_SETUP_COMPILER
 # Figure out flags for cmark-gfm library
 #-----------------------------------------------------------------------
 
-TCLCMARK_LOCATE_CMARK
 
 #-----------------------------------------------------------------------
 # __CHANGE__
@@ -80,11 +79,18 @@ TCLCMARK_LOCATE_CMARK
 # and PKG_TCL_SOURCES.
 #-----------------------------------------------------------------------
 
-TEA_ADD_SOURCES([tclcmark.c])
+TEA_ADD_SOURCES([arena.c			footnotes.c		iterator.c		plaintext.c		syntax_extension.c])
+TEA_ADD_SOURCES([blocks.c		houdini_href_e.c	latex.c			plugin.c		tclcmark.c])
+TEA_ADD_SOURCES([buffer.c		houdini_html_e.c	linked_list.c		references.c		utf8.c])
+TEA_ADD_SOURCES([cmark.c			houdini_html_u.c	man.c			registry.c		xml.c])
+TEA_ADD_SOURCES([cmark_ctype.c		html.c			map.c			render.c])
+TEA_ADD_SOURCES([commonmark.c		inlines.c		node.c			scanners.c])
+TEA_ADD_SOURCES([autolink.c		ext_scanners.c		table.c			tasklist.c])
+TEA_ADD_SOURCES([core-extensions.c	strikethrough.c		tagfilter.c])
 TEA_ADD_HEADERS([])
 TEA_ADD_INCLUDES([])
-TEA_ADD_LIBS([${CMARK_LIBS}])
-TEA_ADD_CFLAGS([${CMARK_CFLAGS}])
+TEA_ADD_LIBS([])
+TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
 TEA_ADD_TCL_SOURCES([])
 
