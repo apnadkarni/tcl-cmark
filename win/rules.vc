@@ -195,6 +195,9 @@ DOCDIR		= $(ROOT)\doc
 !ifndef GENERICDIR
 GENERICDIR	= $(ROOT)\generic
 !endif
+!ifndef GFMDIR
+GFMDIR	= $(ROOT)\cmark-gfm
+!endif
 !ifndef TOOLSDIR
 TOOLSDIR	= $(ROOT)\tools
 !endif
@@ -1069,7 +1072,7 @@ TCLLIB		= $(OUT_DIR)\$(TCLLIBNAME)
 
 TCLSTUBLIBNAME	= $(STUBPREFIX)$(VERSION).lib
 TCLSTUBLIB	= $(OUT_DIR)\$(TCLSTUBLIBNAME)
-TCL_INCLUDES    = -I"$(WINDIR)" -I"$(GENERICDIR)"
+TCL_INCLUDES    = -I"$(WINDIR)" -I"$(GENERICDIR)" -I"$(GFMDIR)"
 
 !else # ! $(DOING_TCL)
 
@@ -1150,7 +1153,7 @@ WISH 		= $(OUT_DIR)\$(WISHNAME)
 TKSTUBLIB	= $(OUT_DIR)\$(TKSTUBLIBNAME)
 TKIMPLIB	= $(OUT_DIR)\$(TKIMPLIBNAME)
 TKLIB		= $(OUT_DIR)\$(TKLIBNAME)
-TK_INCLUDES    = -I"$(WINDIR)" -I"$(GENERICDIR)"
+TK_INCLUDES    = -I"$(WINDIR)" -I"$(GENERICDIR)" -I"$(GFMDIR)"
 
 !else # effectively NEED_TK
 
@@ -1390,7 +1393,7 @@ cwarn = $(cwarn) -WX
 
 INCLUDES = $(TCL_INCLUDES) $(TK_INCLUDES) $(PRJ_INCLUDES)
 !if !$(DOING_TCL) && !$(DOING_TK)
-INCLUDES = $(INCLUDES) -I"$(GENERICDIR)" -I"$(WINDIR)" -I"$(COMPATDIR)"
+INCLUDES = $(INCLUDES) -I"$(GENERICDIR)" -I"$(GFMDIR)" -I"$(WINDIR)" -I"$(COMPATDIR)"
 !endif
 
 # These flags are defined roughly in the order of the pre-reform
@@ -1673,6 +1676,11 @@ $<
 <<
 
 {$(GENERICDIR)}.c{$(TMP_DIR)}.obj::
+	$(CCPKGCMD) @<<
+$<
+<<
+
+{$(GFMDIR)}.c{$(TMP_DIR)}.obj::
 	$(CCPKGCMD) @<<
 $<
 <<
