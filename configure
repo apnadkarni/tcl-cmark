@@ -5357,6 +5357,7 @@ done
 		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
 		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
 		    -a ! -f "${srcdir}/macosx/$i" \
+		    -a ! -f "${srcdir}/cmark-gfm/$i" \
 		    ; then
 		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
 		fi
@@ -5392,6 +5393,7 @@ done
 		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
 		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
 		    -a ! -f "${srcdir}/macosx/$i" \
+		    -a ! -f "${srcdir}/cmark-gfm/$i" \
 		    ; then
 		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
 		fi
@@ -5427,6 +5429,7 @@ done
 		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
 		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
 		    -a ! -f "${srcdir}/macosx/$i" \
+		    -a ! -f "${srcdir}/cmark-gfm/$i" \
 		    ; then
 		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
 		fi
@@ -5462,6 +5465,7 @@ done
 		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
 		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
 		    -a ! -f "${srcdir}/macosx/$i" \
+		    -a ! -f "${srcdir}/cmark-gfm/$i" \
 		    ; then
 		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
 		fi
@@ -5497,6 +5501,7 @@ done
 		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
 		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
 		    -a ! -f "${srcdir}/macosx/$i" \
+		    -a ! -f "${srcdir}/cmark-gfm/$i" \
 		    ; then
 		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
 		fi
@@ -5532,6 +5537,7 @@ done
 		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
 		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
 		    -a ! -f "${srcdir}/macosx/$i" \
+		    -a ! -f "${srcdir}/cmark-gfm/$i" \
 		    ; then
 		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
 		fi
@@ -5567,6 +5573,7 @@ done
 		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
 		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
 		    -a ! -f "${srcdir}/macosx/$i" \
+		    -a ! -f "${srcdir}/cmark-gfm/$i" \
 		    ; then
 		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
 		fi
@@ -5602,6 +5609,7 @@ done
 		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
 		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
 		    -a ! -f "${srcdir}/macosx/$i" \
+		    -a ! -f "${srcdir}/cmark-gfm/$i" \
 		    ; then
 		    as_fn_error $? "could not find source file '$i'" "$LINENO" 5
 		fi
@@ -5661,6 +5669,7 @@ done
 	if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
 	    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
 	    -a ! -f "${srcdir}/macosx/$i" \
+		    -a ! -f "${srcdir}/cmark-gfm/$i" \
 	    ; then
 	    as_fn_error $? "could not find stub source file '$i'" "$LINENO" 5
 	fi

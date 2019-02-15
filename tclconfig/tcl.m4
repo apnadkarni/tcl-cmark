@@ -3006,7 +3006,7 @@ AC_DEFUN([TEA_ADD_SOURCES], [
 		# in Makefile.in as well
 		if test ! -f "${srcdir}/$i" -a ! -f "${srcdir}/generic/$i" \
 		    -a ! -f "${srcdir}/win/$i" -a ! -f "${srcdir}/unix/$i" \
-		    -a ! -f "${srcdir}/macosx/$i" \
+		    -a ! -f "${srcdir}/macosx/$i"  -a ! -f "${srcdir}/cmark-gfm/$i" \
 		    ; then
 		    AC_MSG_ERROR([could not find source file '$i'])
 		fi
