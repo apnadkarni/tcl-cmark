@@ -737,6 +737,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 with_tcl
+with_cmark_gfm
 with_tclinclude
 enable_threads
 enable_shared
@@ -1392,6 +1393,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-tcl              directory containing tcl configuration
                           (tclConfig.sh)
+  --with-cmark-gfm=DIR    installation directory of cmark-gfm
   --with-tclinclude       directory containing the public Tcl header files
   --with-celib=DIR        use Windows/CE support library from DIR
 
@@ -5343,21 +5345,39 @@ done
 #-----------------------------------------------------------------------
 
 
+
+# Check whether --with-cmark-gfm was given.
+if test "${with_cmark_gfm+set}" = set; then :
+  withval=$with_cmark_gfm; with_cmark_gfm="${withval}"
+fi
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for cmark-gfm installation" >&5
 $as_echo_n "checking for cmark-gfm installation... " >&6; }
+    HAVECMARK=0
     CMARK_LIBS=""
-    HAVECMARK=`pkg-config --exists libcmark-gfm && echo "1"`
+    if test x"${with_cmark_gfm}" != x ; then
+        HAVECMARK=2
+        CMARK_CFLAGS="-I${with_cmark_gfm}/include"
+        CMARK_LIBS="${with_cmark_gfm}/lib/libcmark-gfm-extensions.a ${with_cmark_gfm}/lib/libcmark-gfm.a"
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${with_cmark_gfm}" >&5
+$as_echo "${with_cmark_gfm}" >&6; }
+    else
+        HAVECMARK=`pkg-config --exists libcmark-gfm && echo "1"`
+    fi
+
     if test "$HAVECMARK" = "1" ; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
 $as_echo "found" >&6; }
         if test "${TEA_PLATFORM}" = "windows" ; then
             CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm`"
-            CMARK_LIBS="-Wl,-Bstatic `pkg-config --static --libs libcmark-gfm` -lcmark-gfm-extensions -Wl,-Bdynamic"
+            CMARK_LIBS="-Wl,-Bstatic `pkg-config --static --libs libcmark-gfm` -lcmark-gfmextensions -Wl,-Bdynamic"
         else
             CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm`"
-            CMARK_LIBS="`pkg-config --libs libcmark-gfm` -lcmark-gfm-extensions"
+            CMARK_LIBS="`pkg-config --libs libcmark-gfm` -lcmark-gfmextensions"
         fi
-    else
+    fi
+
+    if test x"${CMARK_LIBS}" = x ; then
         as_fn_error $? "The required lib libcmark-gfm not found" "$LINENO" 5
     fi
 

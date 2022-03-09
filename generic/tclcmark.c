@@ -20,7 +20,7 @@
 
 extern DLLEXPORT int Cmark_Init(Tcl_Interp * interp);
 
-Tcl_Config tclcmark_config[] = {
+static Tcl_Config tclcmark_config[] = {
     {"cmark,version", CMARK_GFM_VERSION_STRING},
     {NULL, NULL}
 };
@@ -35,7 +35,7 @@ static void tclcmark_memory_panic()
  * allocator so we can directly use allocated memory as interpreter result.
  * We need wrappers because parameter types differ (int v/s size_t).
  */
-void *tclcmark_calloc(size_t nmem, size_t size)
+static void *tclcmark_calloc(size_t nmem, size_t size)
 {
     size_t nbytes;
     void *p;
@@ -51,14 +51,14 @@ void *tclcmark_calloc(size_t nmem, size_t size)
     return p;
 }
 
-void *tclcmark_realloc(void *p, size_t size)
+static void *tclcmark_realloc(void *p, size_t size)
 {
     if (size > INT_MAX)
         tclcmark_memory_panic();
     return ckrealloc(p, (int) size);
 }
 
-void tclcmark_free(void *p)
+static void tclcmark_free(void *p)
 {
     ckfree(p);
 }
