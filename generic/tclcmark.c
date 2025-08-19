@@ -18,6 +18,13 @@
 #include "cmark-gfm.h"
 #include "cmark-gfm-core-extensions.h"
 
+#if TCL_MAJOR_VERSION < 9
+#ifdef Tcl_Size
+#undef Tcl_Size
+typedef int Tcl_Size
+#endif
+#endif
+
 extern DLLEXPORT int Cmark_Init(Tcl_Interp * interp);
 
 static Tcl_Config tclcmark_config[] = {
@@ -140,7 +147,7 @@ static int tclcmark_render_cmd(
     cmark_node *document = NULL;
     cmark_parser *parser = NULL;
     cmark_llist *syntax_extensions;
-    int nbytes, res = TCL_ERROR;
+    int res = TCL_ERROR;
     char *cmark_text, *rendered;
     Tcl_Obj *o;
 
@@ -213,6 +220,7 @@ static int tclcmark_render_cmd(
         }
     }
 
+    Tcl_Size nbytes;
     cmark_text = Tcl_GetStringFromObj(objv[objc-1], &nbytes);
 
 #ifdef TCL_CMARK_USE_ARENA
