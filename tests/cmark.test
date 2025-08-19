@@ -70,7 +70,7 @@ set test_cases {
         comment {Invalid UTF8}
         options {}
         input "abc\0def"
-        output "<p>abc\0def</p>\n"
+        output "<p>abc\ufffddef</p>\n"
     }
     2.1 {
         comment {Invalid UTF8 -utf8validate}

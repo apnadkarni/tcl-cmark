@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
+#include <assert.h>
 #include "tcl.h"
 #include "cmark-gfm.h"
 #include "cmark-gfm-core-extensions.h"
@@ -21,8 +22,8 @@
 #if TCL_MAJOR_VERSION < 9
 #ifdef Tcl_Size
 #undef Tcl_Size
-typedef int Tcl_Size
 #endif
+typedef int Tcl_Size;
 #endif
 
 extern DLLEXPORT int Cmark_Init(Tcl_Interp * interp);
@@ -144,17 +145,17 @@ static int tclcmark_render_cmd(
     int autolink = 0;
     int tagfilter = 0;
     int tasklist = 0;
-    cmark_node *document = NULL;
-    cmark_parser *parser = NULL;
     cmark_llist *syntax_extensions;
     int res = TCL_ERROR;
     char *cmark_text, *rendered;
-    Tcl_Obj *o;
+    Tcl_Encoding utf8enc = NULL;
 
     if (objc < 2) {
 	Tcl_WrongNumArgs(interp, 1, objv, "?options? COMMONMARKTEXT");
         return TCL_ERROR;
     }
+    Tcl_DString ds;
+    Tcl_DStringInit(&ds); /* Init early in case of error exit */
 
     cmark_gfm_core_extensions_ensure_registered();
     
@@ -222,7 +223,23 @@ static int tclcmark_render_cmd(
 
     Tcl_Size nbytes;
     cmark_text = Tcl_GetStringFromObj(objv[objc-1], &nbytes);
+    utf8enc = Tcl_GetEncoding(interp, "utf-8");
+#if TCL_MAJOR_VERSION > 8
+    if (Tcl_UtfToExternalDStringEx(interp, utf8enc, cmark_text, nbytes,
+                                   TCL_ENCODING_PROFILE_STRICT, &ds, NULL) != TCL_OK)
+        return TCL_ERROR;
+#else
+    if (Tcl_UtfToExternalDString(utf8enc, cmark_text, nbytes, &ds) == NULL) {
+        Tcl_SetResult(interp, "Error exporting to utf-8", TCL_STATIC);
+        return TCL_ERROR;
+    }
+#endif
 
+    cmark_text = Tcl_DStringValue(&ds);
+    nbytes = Tcl_DStringLength(&ds);
+
+    cmark_node *document = NULL;
+    cmark_parser *parser = NULL;
 #ifdef TCL_CMARK_USE_ARENA
     parser = cmark_parser_new_with_mem(cmark_opts,
                                        cmark_get_arena_mem_allocator());
@@ -264,9 +281,9 @@ static int tclcmark_render_cmd(
     document = cmark_parser_finish(parser);
     if (document == NULL)
         goto document_error;
-    
+
     switch (render_fmt) {
-    case TCL_CMARK_HTML: 
+    case TCL_CMARK_HTML:
         syntax_extensions = cmark_parser_get_syntax_extensions(parser);
         rendered = cmark_render_html_with_mem(document, cmark_opts, 
                                               syntax_extensions,
@@ -298,18 +315,25 @@ static int tclcmark_render_cmd(
         rendered = NULL; /* To keep compiler happy about uninited use below */
     }
 
-    o = Tcl_NewObj();
-    /*
-     * Invalid string rep even if new Tcl_Obj because we do not want 
-     * to rely on how it's fields are initialized 
-     */
-    Tcl_InvalidateStringRep(o);
-    o->bytes = rendered;
-    o->length = strlen(rendered);
-    Tcl_SetObjResult(interp, o);
+    assert(rendered);
+    Tcl_DStringFree(&ds);
+#if TCL_MAJOR_VERSION > 8
+    if (Tcl_ExternalToUtfDStringEx(interp, utf8enc, rendered, -1,
+                                   TCL_ENCODING_PROFILE_STRICT, &ds, NULL) != TCL_OK)
+        goto document_error;
+#else
+    if (Tcl_ExternalToUtfDString(utf8enc, rendered, -1, &ds) == NULL) {
+        Tcl_SetResult(interp, "Error importing from utf-8", TCL_STATIC);
+        goto document_error;
+    }
+#endif
+    Tcl_DStringResult(interp, &ds);
     res = TCL_OK;
 
 vamoose:
+    Tcl_DStringFree(&ds);
+    if (utf8enc)
+        Tcl_FreeEncoding(utf8enc);
 
 #ifdef TCL_CMARK_USE_ARENA
     /* All memory is freed, no need to free parser and document */
