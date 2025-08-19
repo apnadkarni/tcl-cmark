@@ -59,7 +59,7 @@ CMARKDIR = cmark-gfm\$(ARCH:IX86=x86)
 PRJ_DEFINES = -DCMARK_STATIC_DEFINE -DCMARKEXTENSIONS_STATIC_DEFINE -wd4267 
 PRJ_INCLUDES = -I"$(CMARKDIR)\include"
 PRJ_OBJS = $(TMP_DIR)\tclcmark.obj
-PRJ_LIBS = $(CMARKDIR)\lib\cmark-gfm_static.lib $(CMARKDIR)\lib\cmark-gfmextensions_static.lib 
+PRJ_LIBS = $(CMARKDIR)\lib\cmark-gfm_static.lib $(CMARKDIR)\lib\cmark-gfm-extensions_static.lib
 
 !include "$(_RULESDIR)\targets.vc"
 

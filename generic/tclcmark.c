@@ -247,7 +247,6 @@ static int tclcmark_render_cmd(
     }
 
     if (gfm || tasklist) {
-        fprintf(stderr, "Using tasklist extensions");
         res = tclcmark_load_extension(interp, parser, "tasklist");
         if (res != TCL_OK)
             goto vamoose;
@@ -389,7 +388,7 @@ static int tclcmark_extensions_cmd(
 int Cmark_Init(Tcl_Interp *interp)
 {
 #ifdef USE_TCL_STUBS
-    if (Tcl_InitStubs(interp, "8.1", 0) == NULL) {
+    if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
 	return TCL_ERROR;
     }
 #endif
@@ -400,7 +399,7 @@ int Cmark_Init(Tcl_Interp *interp)
     Tcl_CreateObjCommand(interp, "cmark::render", tclcmark_render_cmd,
 	    (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
 #if 0
-    Tcl_CreateObjCommand(interp, "cmark::extensions", 
+    Tcl_CreateObjCommand(interp, "cmark::extensions",
                          tclcmark_extensions_cmd,
                          (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
 #endif

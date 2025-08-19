@@ -4,6 +4,13 @@
 package require tcltest
 package require cmark
 
+tcltest::test pkgconfig-1.0 {pkgconfig list} -body {
+    cmark::pkgconfig list
+} -result [list cmark,version]
+tcltest::test pkgconfig-2.0 {pkgconfig get} -body {
+    cmark::pkgconfig get cmark,version
+} -result {\d+.\d+.*} -match regexp
+
 set test_cases {
     1.0 {
         comment {Empty input}
@@ -27,18 +34,19 @@ set test_cases {
     }
     1.4 {
         options {-to xml}
+        testopts {-match glob}
         input "# Heading\nfirst para\n\nsecond para"
         output {<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE document SYSTEM "CommonMark.dtd">
 <document xmlns="http://commonmark.org/xml/1.0">
   <heading level="1">
-    <text>Heading</text>
+    <text*>Heading</text>
   </heading>
   <paragraph>
-    <text>first para</text>
+    <text*>first para</text>
   </paragraph>
   <paragraph>
-    <text>second para</text>
+    <text*>second para</text>
   </paragraph>
 </document>
 }
@@ -97,9 +105,16 @@ set test_cases {
         input "This is a <bo?/gus> tag."
         output "<p>This is a &lt;bo?/gus&gt; tag.</p>\n"
     }
-    5.1 {
+    5.1.0 {
         comment {Bogus tags -liberaltag}
+        testopts {-match glob}
         options -liberaltag
+        input "This is a <bo?/gus> tag."
+        output "<p>This is a *raw HTML omitted* tag.</p>\n"
+    }
+    5.1.1 {
+        comment {Bogus tags -liberaltag}
+        options {-liberaltag -unsafe}
         input "This is a <bo?/gus> tag."
         output "<p>This is a <bo?/gus> tag.</p>\n"
     }
@@ -112,18 +127,18 @@ set test_cases {
         comment {Footnote -footnotes}
         options {-footnotes -to commonmark}
         input "A footnote\[^footnote\].\n\n\[^footnote]: This is a footnote"
-        output "A footnote\[^1\].\n\n\[^1]:\n    This is a footnote\n"
+        output "A footnote\[^footnote\].\n\n\[^footnote]:\n    This is a footnote\n"
     }
-    7.0 {
+    7.0.0 {
         comment {Inline html}
         input "This is <b>inline html</b>."
-        output "<p>This is <b>inline html</b>.</p>\n"
-    }
-    7.1 {
-        comment {Inline html -safe}
-        options -safe
-        input "This is <b>inline html</b>."
         output "<p>This is <!-- raw HTML omitted -->inline html<!-- raw HTML omitted -->.</p>\n"
+    }
+    7.0.1 {
+        comment {Inline html -unsafe}
+        options -unsafe
+        input "This is <b>inline html</b>."
+        output "<p>This is <b>inline html</b>.</p>\n"
     }
     8.0 {
         comment {Width}
@@ -187,20 +202,42 @@ set test_cases {
         input "This is ~false~true."
         output "<p>This is <del>false</del>true.</p>\n"
     }
-    13.0 {
+    13.0.0 {
         comment {Tagfilter}
-        input "This is a <textarea>text area</textarea>."
-        output "<p>This is a <textarea>text area</textarea>.</p>\n"
-    }
-    13.1 {
-        comment {Tagfilter -tagfilter}
+        testopts {-match glob}
         options -tagfilter
+        input "This is a <textarea>text area</textarea>."
+        output "<p>This is a *raw HTML omitted*.</p>\n"
+    }
+    13.0.1 {
+        comment {Tagfilter}
+        options {-tagfilter -unsafe}
         input "This is a <textarea>text area</textarea>."
         output "<p>This is a &lt;textarea>text area&lt;/textarea>.</p>\n"
     }
-    13.2 {
+    13.1.0 {
+        comment {Tagfilter -tagfilter}
+        testopts {-match glob}
+        options -tagfilter
+        input "This is a <textarea>text area</textarea>."
+        output "<p>This is a *raw HTML omitted*.</p>\n"
+    }
+    13.1.1 {
+        comment {Tagfilter -tagfilter}
+        options {-tagfilter -unsafe}
+        input "This is a <textarea>text area</textarea>."
+        output "<p>This is a &lt;textarea>text area&lt;/textarea>.</p>\n"
+    }
+    13.2.0 {
         comment {Tagfilter -gfm}
+        testopts {-match glob}
         options -gfm
+        input "This is a <textarea>text area</textarea>."
+        output "<p>This is a *raw HTML omitted*.</p>\n"
+    }
+    13.2.1 {
+        comment {Tagfilter -gfm}
+        options {-gfm -unsafe}
         input "This is a <textarea>text area</textarea>."
         output "<p>This is a &lt;textarea>text area&lt;/textarea>.</p>\n"
     }
@@ -211,6 +248,7 @@ set test_cases {
     }
     14.1 {
         comment {Tables -table}
+        testopts {-match regexp}
         options -table
         input "|Column 1|Column 2\n\|----|----\n|r0c0|r0c1\n"
         output {<table>
@@ -224,13 +262,14 @@ set test_cases {
 <tr>
 <td>r0c0</td>
 <td>r0c1</td>
-</tr></tbody></table>
-}            
+</tr>\s*</tbody>\s*</table>
+}
     }
     14.2 {
         comment {Tables -gfm}
         options -gfm
         input "|Column 1|Column 2\n\|----|----\n|r0c0|r0c1\n"
+        testopts {-match regexp}
         output {<table>
 <thead>
 <tr>
@@ -242,8 +281,8 @@ set test_cases {
 <tr>
 <td>r0c0</td>
 <td>r0c1</td>
-</tr></tbody></table>
-}            
+</tr>\s*</tbody>\s*</table>
+}
     }
     15.0 {
         comment {Autolink}
@@ -274,11 +313,12 @@ tcltest::test render-0 {No arguments} -body {
 proc generate_test {id config} {
     lassign {} comment options input
     set codes ok
+    set testopts {}
     dict with config {}
     if {$comment eq ""} {
         set comment $options
     }
-    tcltest::test render-$id $comment -body "cmark::render $options {$input}" -result "$output" -returnCodes $codes
+    tcltest::test render-$id $comment -body "cmark::render $options {$input}" -result "$output" -returnCodes $codes {*}$testopts
 }
 
 dict for {id config} $test_cases {
