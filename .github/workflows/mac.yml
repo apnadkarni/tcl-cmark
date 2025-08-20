@@ -1,4 +1,4 @@
-name: Mingw
+name: MacOS
 
 on:
   workflow_dispatch:
@@ -23,20 +23,11 @@ on:
         required: true
         type: choice
         options:
-          - '["windows-latest"]'
-          - '["windows-2022"]'
-          - '["windows-2019"]'
-          - '["windows-2019", "windows-2022"]'
-        default: '["windows-latest"]'
-      msystems:
-        description: 'mingw32 and/or mingw64'
-        required: false
-        type: choice
-        options:
-          - '["mingw64"]'
-          - '["mingw32"]'
-          - '["mingw64", "mingw32"]'
-        default: '["mingw64", "mingw32"]'
+          - '["macos-latest"]'
+          - '["macos-13"]'
+          - '["macos-14"]'
+          - '["macos-13", "macos-14"]'
+        default: '["macos-latest"]'
       run-tests: # Whether tests should be run
         description: 'Run tests as well'
         required: false
@@ -49,41 +40,19 @@ jobs:
       matrix:
         runner-os: ${{ fromJSON(github.event.inputs.runners) }}
         tcl-tag: ${{ fromJSON(github.event.inputs.tcl-tags) }}
-        msystem: ${{ fromJSON(github.event.inputs.msystems) }}
     runs-on: ${{ matrix.runner-os }}
-    defaults:
-      run:
-        shell: msys2 {0}
 
     steps:
 
-    - name: Set up msys2
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: ${{ matrix.msystem }}
-        pacboy: "git: make: gcc:p"
-        path-type: minimal
-        release: true
-        update: false
-        cache: true
-
-    - name: Verify toolchain
+    - name: Update brew
       run: |
-        gcc -v
-        make -v
-
-    - name: Install cmake
-      id: cmake-install
-      run: |
-        pacman --sync --refresh --needed --noconfirm cmake
+        brew update
 
     - name: Setup Tcl
       id: tcl-setup-step
       uses: apnadkarni/tcl-setup@v1
       with:
         tcl-tag: ${{ matrix.tcl-tag }}
-        toolchain: 'msys2'
-        target-arch: ${{ matrix.msystem }}
 
     - name: Checkout cmark-gfm
       id: cmark-gfm-checkout
@@ -95,21 +64,17 @@ jobs:
 
     - name: Build cmark-gfm
       id: cmark-gfm-build
-      shell: msys2 {0}
       run: |
         cd cmark-gfm
         mkdir build
         cd build
-        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCMAKE_BUILD_TYPE=Release
         cmake --build . --config Release
         cmake --install . --prefix ${{ env.TCLEXTRASDIR }}
 
     - name: Build and test
-      id: tcl-build-tclmark
       uses: apnadkarni/tcl-build-extension@v1
       with:
-        toolchain: 'msys2'
         run-tests: ${{ inputs.run-tests }}
         config-opts: '--with-cmark-gfm=${{ env.TCLEXTRASDIR }}'
-
 

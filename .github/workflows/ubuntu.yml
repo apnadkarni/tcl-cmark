@@ -51,7 +51,6 @@ jobs:
     - name: Install cmark-gfm
       id: cmark-gfm
       run: |
-       sudo apt-get update
        sudo apt-get install libcmark-gfm-dev libcmark-gfm-extensions-dev
 
     - name: Make
