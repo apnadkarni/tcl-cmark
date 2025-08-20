@@ -149,6 +149,8 @@ static int tclcmark_render_cmd(
     int res = TCL_ERROR;
     char *cmark_text, *rendered;
     Tcl_Encoding utf8enc = NULL;
+    cmark_node *document = NULL;
+    cmark_parser *parser = NULL;
 
     if (objc < 2) {
 	Tcl_WrongNumArgs(interp, 1, objv, "?options? COMMONMARKTEXT");
@@ -238,8 +240,6 @@ static int tclcmark_render_cmd(
     cmark_text = Tcl_DStringValue(&ds);
     nbytes = Tcl_DStringLength(&ds);
 
-    cmark_node *document = NULL;
-    cmark_parser *parser = NULL;
 #ifdef TCL_CMARK_USE_ARENA
     parser = cmark_parser_new_with_mem(cmark_opts,
                                        cmark_get_arena_mem_allocator());
