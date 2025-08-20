@@ -5357,7 +5357,16 @@ printf %s "checking for cmark-gfm installation... " >&6; }
     if test x"${with_cmark_gfm}" != x ; then
         HAVECMARK=2
         CMARK_CFLAGS="-I${with_cmark_gfm}/include"
-        CMARK_LIBS="${with_cmark_gfm}/lib/libcmark-gfm-extensions.a ${with_cmark_gfm}/lib/libcmark-gfm.a"
+        if test x"${TEA_PLATFORM}" = x"windows" ; then
+            CMARK_CFLAGS="$CMARK_CFLAGS -DCMARK_GFM_STATIC_DEFINE -DCMARK_GFM_EXTENSIONS_STATIC_DEFINE"
+        fi
+        CMARK_LIBS="${with_cmark_gfm}/lib/libcmark-gfm.a"
+        # Note exensions lib must come before core library.
+        if test -f "${with_cmark_gfm}/lib/libcmark-gfm-extensions.a"; then
+            CMARK_LIBS="${with_cmark_gfm}/lib/libcmark-gfm-extensions.a $CMARK_LIBS"
+        elif test -f "${with_cmark_gfm}/lib/libcmark-gfmextensions.a"; then
+            CMARK_LIBS="${with_cmark_gfm}/lib/libcmark-gfmextensions.a $CMARK_LIBS"
+        fi
 	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${with_cmark_gfm}" >&5
 printf "%s\n" "${with_cmark_gfm}" >&6; }
     else
@@ -5368,7 +5377,7 @@ printf "%s\n" "${with_cmark_gfm}" >&6; }
         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: found" >&5
 printf "%s\n" "found" >&6; }
         if test x"${TEA_PLATFORM}" = x"windows" ; then
-            CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm`"
+            CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm` -DCMARK_GFM_STATIC_DEFINE -DCMARK_GFM_EXTENSIONS_STATIC_DEFINE"
             CMARK_LIBS="-Wl,-Bstatic `pkg-config --static --libs libcmark-gfm` -lcmark-gfmextensions -Wl,-Bdynamic"
         else
             CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm`"
