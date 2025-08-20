@@ -1,0 +1,60 @@
+name: Ubuntu
+
+on:
+  workflow_dispatch:
+    inputs:
+      tcl-tags:  # User input for selecting Tcl tag
+        description: 'Tcl version'
+        required: true
+        type: choice
+        options:
+          - '["core-9-0-0"]'
+          - '["core-9-0-2"]'
+          - '["core-8-6-10"]'
+          - '["core-8-6-17"]'
+          - '["main"]'
+          - '["core-8-6-branch"]'
+          - '["core-9-0-branch"]'
+          - '["core-8-6-10", "core-9-0-0"]'
+          - '["core-8-6-10", "core-8-6-17", "core-9-0-0", "core-9-0-2"]'
+        default: '["core-8-6-10", "core-9-0-0"]'
+      runners:  # User input for selecting OS
+        description: 'OS version'
+        required: true
+        type: choice
+        options:
+          - '["ubuntu-22.04"]'
+          - '["ubuntu-24.04"]'
+          - '["ubuntu-22.04", "ubuntu-24.04"]'
+        default: '["ubuntu-22.04"]'
+      run-tests: # Whether tests should be run
+        description: 'Run tests as well'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        runner-os: ${{ fromJSON(github.event.inputs.runners) }}
+        tcl-tag: ${{ fromJSON(github.event.inputs.tcl-tags) }}
+
+    runs-on: ${{ matrix.runner-os }}
+
+    steps:
+    - name: Setup Tcl
+      uses: apnadkarni/tcl-setup@v1
+      with:
+        tcl-tag: ${{ matrix.tcl-tag }}
+
+    - name: Install cmark-gfm
+      id: cmark-gfm
+      run: |
+       sudo apt-get update
+       sudo apt-get install libcmark-gfm-dev libcmark-gfm-extensions-dev
+
+    - name: Make
+      uses: apnadkarni/tcl-build-extension@v1
+      with:
+        run-tests: ${{ inputs.run-tests }}
