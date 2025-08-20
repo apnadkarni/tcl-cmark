@@ -19,7 +19,7 @@ dnl	to configure the system for the local environment.
 # so that we create the export library with the dll.
 #-----------------------------------------------------------------------
 
-AC_INIT([tclcmark], [2.0])
+AC_INIT([tclcmark],[2.0])
 
 PACKAGE_TCLNAME="cmark"
 AC_SUBST(PACKAGE_TCLNAME)
@@ -182,4 +182,5 @@ TEA_PROG_TCLSH
 # which require substituting th AC variables in.  Include these here.
 #--------------------------------------------------------------------
 
-AC_OUTPUT([Makefile pkgIndex.tcl])
+AC_CONFIG_FILES([Makefile pkgIndex.tcl])
+AC_OUTPUT

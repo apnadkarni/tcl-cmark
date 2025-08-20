@@ -17,12 +17,12 @@ AC_DEFUN(TCLCMARK_LOCATE_CMARK, [
 
     if test "$HAVECMARK" = "1" ; then
         AC_MSG_RESULT([found])
-        if test "${TEA_PLATFORM}" = "windows" ; then
+        if test x"${TEA_PLATFORM}" = x"windows" ; then
             CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm`"
             CMARK_LIBS="-Wl,-Bstatic `pkg-config --static --libs libcmark-gfm` -lcmark-gfmextensions -Wl,-Bdynamic"
         else
             CMARK_CFLAGS="`pkg-config --cflags libcmark-gfm`"
-            CMARK_LIBS="`pkg-config --libs libcmark-gfm` -lcmark-gfmextensions"
+            CMARK_LIBS="`pkg-config --libs libcmark-gfm`"
         fi
     fi
 
