@@ -56,34 +56,30 @@ jobs:
         shell: msys2 {0}
 
     steps:
-
     - name: Set up msys2
       uses: msys2/setup-msys2@v2
       with:
         msystem: ${{ matrix.msystem }}
-        pacboy: "git: make: gcc:p"
+        pacboy: "git: unzip: make: toolchain:p"
         path-type: minimal
         release: true
         update: false
         cache: true
+        
+    - name: Download CMake v3.x
+      id: cmake-download
+      run: |
+        curl -LO https://github.com/Kitware/CMake/releases/download/v3.27.7/cmake-3.27.7-windows-x86_64.zip
+        unzip cmake-3.27.7-windows-x86_64.zip
 
     - name: Verify toolchain
       run: |
+        which gcc
         gcc -v
+        which mingw32-make
+        which make
         make -v
-
-    - name: Install cmake
-      id: cmake-install
-      run: |
-        pacman --sync --refresh --needed --noconfirm cmake
-
-    - name: Setup Tcl
-      id: tcl-setup-step
-      uses: apnadkarni/tcl-setup@v1
-      with:
-        tcl-tag: ${{ matrix.tcl-tag }}
-        toolchain: 'msys2'
-        target-arch: ${{ matrix.msystem }}
+        $GITHUB_WORKSPACE/cmake-3.27.7-windows-x86_64/bin/cmake.exe --version
 
     - name: Checkout cmark-gfm
       id: cmark-gfm-checkout
@@ -92,7 +88,16 @@ jobs:
         repository: github/cmark-gfm
         ref: 0.29.0.gfm.13
         path: cmark-gfm
+        
+    - name: Setup Tcl
+      id: tcl-setup-step
+      uses: apnadkarni/tcl-setup@v1
+      with:
+        tcl-tag: ${{ matrix.tcl-tag }}
+        toolchain: 'msys2'
+        target-arch: ${{ matrix.msystem }}
 
+# Build cmark-gfm AFTER Tcl since it uses the env.TCLEXTRASDIR
     - name: Build cmark-gfm
       id: cmark-gfm-build
       shell: msys2 {0}
@@ -100,9 +105,10 @@ jobs:
         cd cmark-gfm
         mkdir build
         cd build
-        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-        cmake --build . --config Release
-        cmake --install . --prefix ${{ env.TCLEXTRASDIR }}
+        CMAKE=$GITHUB_WORKSPACE/cmake-3.27.7-windows-x86_64/bin/cmake
+        $CMAKE .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        $CMAKE --build . --config Release
+        $CMAKE --install . --prefix ${{ env.TCLEXTRASDIR }}
 
     - name: Build and test
       id: tcl-build-tclmark
