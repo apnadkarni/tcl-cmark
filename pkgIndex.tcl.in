@@ -1,5 +1,30 @@
 #
 # Tcl package index file
 #
+
 package ifneeded @PACKAGE_TCLNAME@ @PACKAGE_VERSION@ \
-    [list load [file join $dir @PKG_LIB_FILE@] [string totitle @PACKAGE_TCLNAME@]]
+[list apply [list {dir} {
+        package require platform
+        set package_ns ::@PACKAGE_TCLNAME@
+        set initName [string totitle @PACKAGE_TCLNAME@]
+        if {[package vsatisfies [package require Tcl] 9]} {
+            set fileName "@PKG_LIB_FILE9@"
+        } else {
+            set fileName "@PKG_LIB_FILE8@"
+        }
+        set platformId [platform::identify]
+        set searchPaths [list [file join $dir $platformId] \
+                             {*}[lmap platformId [platform::patterns $platformId] {
+                                 file join $dir $platformId
+                             }] \
+                             $dir]
+        foreach path $searchPaths {
+            set lib [file join $path $fileName]
+            if {[file exists $lib]} {
+                uplevel #0 [list load $lib $initName]
+                return
+            }
+        }
+        error "Could not locate $fileName in directories [join $searchPaths {, }]"
+}] $dir]
+

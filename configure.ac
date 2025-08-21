@@ -19,9 +19,11 @@ dnl	to configure the system for the local environment.
 # so that we create the export library with the dll.
 #-----------------------------------------------------------------------
 
-AC_INIT([tclcmark],[1.1])
+# Leave a space after the comma for release.cmd to parse
+AC_INIT([tclcmark], [1.1])
 
-PACKAGE_TCLNAME="cmark"
+# Do not use quotes around name for release.cmd to parse
+PACKAGE_TCLNAME=cmark
 AC_SUBST(PACKAGE_TCLNAME)
 
 #--------------------------------------------------------------------

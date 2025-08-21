@@ -48,6 +48,7 @@
 # The name of the package
 PROJECT = tclcmark
 PRJ_PACKAGE_TCLNAME = cmark
+MULTIPLATFORM_INSTALL=1
 
 !include "rules-ext.vc"
 
