@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Tcl cmark extension</title>
-</head>
-<body>
 <h1>NAME</h1>
-<p><strong>cmark</strong> – Tcl interface to CommonMark / Github Flavored Markdown</p>
+<p><strong>cmark</strong> -- Tcl interface to CommonMark / Github Flavored Markdown</p>
 <h2>SYNOPSIS</h2>
 <pre><code>    package require cmark
     cmark::render ?options? TEXT
@@ -66,11 +60,6 @@ replacement character.</p>
 <blockquote>
 <p>Renders soft line breaks as spaces.</p>
 </blockquote>
-<p><code>-safe</code></p>
-<blockquote>
-<p>Removes raw HTML by placeholder comments and unsafe links such as
-<code>javascript :</code>, <code>vbscript:</code> etc. by empty strings.</p>
-</blockquote>
 <p><code>-sourcepos</code></p>
 <blockquote>
 <p>Includes the <code>data-sourcepos</code> attribute on all block elements.</p>
@@ -78,7 +67,13 @@ replacement character.</p>
 <p><code>-to</code> <code>FORMAT</code></p>
 <blockquote>
 <p>Specifies the output format. <code>FORMAT</code> must be one of <code>html</code>, <code>latex</code>,
-<code>man</code> , <code>xml</code>, <code>commonmark</code> or <code>text</code>.</p>
+<code>man</code> , <code>xml</code>, <code>commonmark</code> or <code>text</code>. The <code>man</code> output is a groff manpage&gt; page without the header.</p>
+</blockquote>
+<p><code>-unsafe</code></p>
+<blockquote>
+<p>Enables raw HTML by placeholder comments and unsafe links such as
+<code>javascript :</code>, <code>vbscript:</code> etc. By default, raw HTML is replaced by
+placeholder string and unsafe links removed.</p>
 </blockquote>
 <p><code>-width</code></p>
 <blockquote>
@@ -118,5 +113,3 @@ extension that disallows certain HTML tags.</p>
 </blockquote>
 <h2>AUTHOR</h2>
 <p>Ashok P. Nadkarni</p>
-
-</body></html>

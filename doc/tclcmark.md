@@ -73,11 +73,6 @@ The following options control the rendering of the input text.
 
 >Renders soft line breaks as spaces.
 
-`-safe`
-
->Removes raw HTML by placeholder comments and unsafe links such as
->`javascript :`, `vbscript:` etc. by empty strings.
-
 `-sourcepos`
 
 >Includes the `data-sourcepos` attribute on all block elements.
@@ -85,7 +80,13 @@ The following options control the rendering of the input text.
 `-to` `FORMAT`
 
 >Specifies the output format. `FORMAT` must be one of `html`, `latex`,
->`man` , `xml`, `commonmark` or `text`.
+>`man` , `xml`, `commonmark` or `text`. The `man` output is a groff manpage> page without the header.
+
+`-unsafe`
+
+>Enables raw HTML by placeholder comments and unsafe links such as
+>`javascript :`, `vbscript:` etc. By default, raw HTML is replaced by
+>placeholder string and unsafe links removed.
 
 `-width`
 

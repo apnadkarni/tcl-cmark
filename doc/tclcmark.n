@@ -1,12 +1,12 @@
 '\"
-`\" Copyright (c) 2017 Ashok P. Nadkarni
+'\" Copyright (c) 2017-2025 Ashok P. Nadkarni
 '\"
+.TH tclcmark n tclcmark 1.1 "Tcl interface to Github-flavored Markdown"
 '\" See file LICENSE in source for licensing terms.
-.TH tclcmark n tclcmark 1.0 "Tcl interface to CommonMark"
 .SH
 NAME
 .PP
-\f[B]cmark\f[] \[en] Tcl interface to CommonMark / Github Flavored Markdown
+\f[B]cmark\f[] \-\- Tcl interface to CommonMark / Github Flavored Markdown
 .SS
 SYNOPSIS
 .IP
@@ -99,13 +99,6 @@ Renders soft line breaks as hard line breaks.
 Renders soft line breaks as spaces.
 .RE
 .PP
-\f[C]\-safe\f[]
-.RS
-.PP
-Removes raw HTML by placeholder comments and unsafe links such as
-\f[C]javascript :\f[], \f[C]vbscript:\f[] etc. by empty strings.
-.RE
-.PP
 \f[C]\-sourcepos\f[]
 .RS
 .PP
@@ -116,7 +109,15 @@ Includes the \f[C]data\-sourcepos\f[] attribute on all block elements.
 .RS
 .PP
 Specifies the output format. \f[C]FORMAT\f[] must be one of \f[C]html\f[], \f[C]latex\f[],
-\f[C]man\f[] , \f[C]xml\f[], \f[C]commonmark\f[] or \f[C]text\f[].
+\f[C]man\f[] , \f[C]xml\f[], \f[C]commonmark\f[] or \f[C]text\f[]. The \f[C]man\f[] output is a groff manpage> page without the header.
+.RE
+.PP
+\f[C]\-unsafe\f[]
+.RS
+.PP
+Enables raw HTML by placeholder comments and unsafe links such as
+\f[C]javascript :\f[], \f[C]vbscript:\f[] etc. By default, raw HTML is replaced by
+placeholder string and unsafe links removed.
 .RE
 .PP
 \f[C]\-width\f[]
@@ -173,4 +174,3 @@ extension that disallows certain HTML tags.
 AUTHOR
 .PP
 Ashok P. Nadkarni
-
