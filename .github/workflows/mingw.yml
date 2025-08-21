@@ -71,11 +71,7 @@ jobs:
       run: |
         gcc -v
         make -v
-
-    - name: Install cmake
-      id: cmake-install
-      run: |
-        pacman --sync --refresh --needed --noconfirm cmake
+        cmake --version
 
     - name: Setup Tcl
       id: tcl-setup-step
