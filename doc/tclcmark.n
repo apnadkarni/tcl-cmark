@@ -1,12 +1,12 @@
 '\"
 '\" Copyright (c) 2017-2025 Ashok P. Nadkarni
 '\"
-.TH tclcmark n tclcmark 1.1 "Tcl interface to Github-flavored Markdown"
 '\" See file LICENSE in source for licensing terms.
+.TH tclcmark n tclcmark 1.1 "Tcl Github-flavored Markdown processor"
 .SH
 NAME
 .PP
-\f[B]cmark\f[] \-\- Tcl interface to CommonMark / Github Flavored Markdown
+\f[B]cmark\f[] \[en] Tcl interface to CommonMark / Github Flavored Markdown
 .SS
 SYNOPSIS
 .IP
@@ -174,3 +174,4 @@ extension that disallows certain HTML tags.
 AUTHOR
 .PP
 Ashok P. Nadkarni
+
