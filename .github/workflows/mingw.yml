@@ -60,11 +60,7 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: ${{ matrix.msystem }}
-        install: >-
-          git
-          unzip
-        pacboy: >-
-          toolchain:p
+        pacboy: "git: unzip: make: toolchain:p"
         path-type: minimal
         release: true
         update: false
