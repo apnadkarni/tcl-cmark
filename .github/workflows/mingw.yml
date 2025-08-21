@@ -60,7 +60,11 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: ${{ matrix.msystem }}
-        pacboy: "git: make: gcc:p unzip:"
+        install: >-
+          git
+          unzip
+        pacboy: >-
+          toolchain:p
         path-type: minimal
         release: true
         update: false
@@ -74,7 +78,10 @@ jobs:
 
     - name: Verify toolchain
       run: |
+        which gcc
         gcc -v
+        which mingw32-make
+        which make
         make -v
         $GITHUB_WORKSPACE/cmake-3.27.7-windows-x86_64/bin/cmake.exe --version
 
