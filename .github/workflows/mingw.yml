@@ -57,15 +57,22 @@ jobs:
 
     steps:
 
+    
     - name: Set up msys2
       uses: msys2/setup-msys2@v2
       with:
         msystem: ${{ matrix.msystem }}
-        pacboy: "git: make: gcc:p cmake:p"
+        pacboy: "git: make: gcc:p unzip:"
         path-type: minimal
         release: true
         update: false
         cache: true
+        
+    - name: Download CMake v3.x
+      run: |
+        curl -LO https://github.com/Kitware/CMake/releases/download/v3.27.7/cmake-3.27.7-windows-x86_64.zip
+        unzip cmake-3.27.7-windows-x86_64.zip
+        echo "${{ github.workspace }}\cmake-3.27.7-windows-x86_64\bin" >> $GITHUB_PATH
 
     - name: Verify toolchain
       run: |
