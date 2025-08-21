@@ -96,7 +96,7 @@ jobs:
         cd cmark-gfm
         mkdir build
         cd build
-        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         cmake --build . --config Release
         cmake --install . --prefix ${{ env.TCLEXTRASDIR }}
 
