@@ -69,15 +69,18 @@ jobs:
         cache: true
         
     - name: Download CMake v3.x
+      id: cmake-download
       run: |
         curl -LO https://github.com/Kitware/CMake/releases/download/v3.27.7/cmake-3.27.7-windows-x86_64.zip
         unzip cmake-3.27.7-windows-x86_64.zip
-        echo "${{ github.workspace }}\cmake-3.27.7-windows-x86_64\bin" >> $GITHUB_PATH
+        echo "${{ github.workspace }}\\cmake-3.27.7-windows-x86_64\\bin" >> $GITHUB_PATH
 
     - name: Verify toolchain
       run: |
+        echo $PATH
         gcc -v
         make -v
+        ${{ github.workspace }}/cmake-3.27.7-windows-x86_64/bin/cmake.exe --version
         cmake --version
 
     - name: Setup Tcl
