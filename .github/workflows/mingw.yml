@@ -56,8 +56,6 @@ jobs:
         shell: msys2 {0}
 
     steps:
-
-    
     - name: Set up msys2
       uses: msys2/setup-msys2@v2
       with:
@@ -73,23 +71,12 @@ jobs:
       run: |
         curl -LO https://github.com/Kitware/CMake/releases/download/v3.27.7/cmake-3.27.7-windows-x86_64.zip
         unzip cmake-3.27.7-windows-x86_64.zip
-        echo "${{ github.workspace }}\\cmake-3.27.7-windows-x86_64\\bin" >> $GITHUB_PATH
 
     - name: Verify toolchain
       run: |
-        echo $PATH
         gcc -v
         make -v
-        ${{ github.workspace }}/cmake-3.27.7-windows-x86_64/bin/cmake.exe --version
-        cmake --version
-
-    - name: Setup Tcl
-      id: tcl-setup-step
-      uses: apnadkarni/tcl-setup@v1
-      with:
-        tcl-tag: ${{ matrix.tcl-tag }}
-        toolchain: 'msys2'
-        target-arch: ${{ matrix.msystem }}
+        $GITHUB_WORKSPACE/cmake-3.27.7-windows-x86_64/bin/cmake.exe --version
 
     - name: Checkout cmark-gfm
       id: cmark-gfm-checkout
@@ -98,6 +85,14 @@ jobs:
         repository: github/cmark-gfm
         ref: 0.29.0.gfm.13
         path: cmark-gfm
+        
+    - name: Setup Tcl
+      id: tcl-setup-step
+      uses: apnadkarni/tcl-setup@v1
+      with:
+        tcl-tag: ${{ matrix.tcl-tag }}
+        toolchain: 'msys2'
+        target-arch: ${{ matrix.msystem }}
 
     - name: Build cmark-gfm
       id: cmark-gfm-build
@@ -109,6 +104,7 @@ jobs:
         cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         cmake --build . --config Release
         cmake --install . --prefix ${{ env.TCLEXTRASDIR }}
+        
 
     - name: Build and test
       id: tcl-build-tclmark
