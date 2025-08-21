@@ -61,7 +61,7 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: ${{ matrix.msystem }}
-        pacboy: "git: make: gcc:p"
+        pacboy: "git: make: gcc:p cmake:p"
         path-type: minimal
         release: true
         update: false
